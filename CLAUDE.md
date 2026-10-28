@@ -39,7 +39,7 @@ Storage must stay replaceable by Neo4j:
 - Multi-step writes, such as an order together with its items, happen inside one repository method.
 - Repository tests target the interface, so they can be reused for a Neo4j implementation.
 
-The shopping cart is kept in the Flask session as `{food_item_id: quantity}` until checkout.
+The shopping cart is kept in the Flask session as `session["cart"] = {"<food_item_id>": quantity}` (string keys, because the session is JSON) until checkout. Only `app/controllers/cart.py` touches the session format (`_load()`/`_save()`). Pricing and rules live in `services.py`: `build_cart(raw)` returns a `Cart` with current prices and drops unpublished or deleted items, and `check_quantity(item, qty)` enforces the minimum order quantity (reuse it at checkout).
 
 ## Domain rules that are easy to get wrong
 

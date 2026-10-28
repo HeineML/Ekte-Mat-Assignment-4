@@ -74,7 +74,12 @@ body {
   aspect-ratio: 400 / 260;
   object-fit: cover;
 }
-.food-card-body { padding: 0.75rem 1rem 1rem; }
+.food-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1rem 1rem;
+}
 .food-card h3 { margin: 0 0 0.4rem; }
 .food-card p { margin: 0.3rem 0; }
 .food-card .price { font-weight: 700; font-size: 1.1rem; }
@@ -103,3 +108,62 @@ body {
   background: #e8f0e9;
 }
 .flash-error { background: #f8e1e1; }
+.flash-info { background: #fdf3d8; }
+
+.small { font-size: 0.85rem; }
+
+button {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #2f5d3a;
+  border-radius: 4px;
+  background: #2f5d3a;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+button:hover { background: #24492d; }
+button.secondary { background: #fff; color: #2f5d3a; }
+button.secondary:hover { background: #e8f0e9; }
+
+input[type="number"] {
+  width: 5.5rem;
+  padding: 0.35rem 0.4rem;
+  font: inherit;
+}
+
+/* Add-to-cart form on menu cards */
+.add-to-cart {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: end;
+  margin-top: auto;  /* sit at the bottom of the card so buttons line up */
+  padding-top: 0.75rem;
+}
+.add-to-cart label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+}
+
+/* Cart */
+.table-scroll { overflow-x: auto; }
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+.cart-table th,
+.cart-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #e3ddd2;
+  text-align: left;
+  vertical-align: middle;
+}
+.cart-table .num { text-align: right; white-space: nowrap; }
+.cart-table tfoot th { font-size: 1.1rem; }
+.inline-form {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}

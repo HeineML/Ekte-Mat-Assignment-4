@@ -19,7 +19,9 @@ def create_app(config_class=Config):
     app.add_template_filter(format_nok, "nok")
 
     from app.controllers.menu import bp as menu_bp
+    from app.controllers.cart import bp as cart_bp
     app.register_blueprint(menu_bp)
+    app.register_blueprint(cart_bp)
 
     return app
 

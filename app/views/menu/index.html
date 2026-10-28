@@ -18,7 +18,18 @@
     <section class="menu-section">
       <h2>{{ category.name }}</h2>
       <div class="card-grid">
-        {% for item in items %}{{ food_card(item) }}{% endfor %}
+        {% for item in items %}
+          {% call food_card(item) %}
+            <form class="add-to-cart" method="post" action="{{ url_for('cart.add') }}">
+              <input type="hidden" name="food_item_id" value="{{ item.id }}">
+              <input type="hidden" name="next" value="{{ request.full_path }}">
+              <label>Quantity
+                <input type="number" name="quantity" min="1" value="{{ item.minimum_quantity }}" required>
+              </label>
+              <button type="submit">Add to cart</button>
+            </form>
+          {% endcall %}
+        {% endfor %}
       </div>
     </section>
   {% else %}

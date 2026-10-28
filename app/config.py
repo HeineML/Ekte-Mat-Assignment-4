@@ -14,4 +14,6 @@ class Config:
 class TestConfig(Config):
     TESTING = True
     SECRET_KEY = "test"
-    DATABASE = ":memory:"
+    # Set per test by tests/conftest.py. ":memory:" can't be used because every
+    # new connection would get its own empty database.
+    DATABASE = None

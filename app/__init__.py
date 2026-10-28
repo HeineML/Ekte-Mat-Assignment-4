@@ -13,6 +13,9 @@ def create_app(config_class=Config):
 
     os.makedirs(app.instance_path, exist_ok=True)
 
+    from app.models import init_storage
+    init_storage(app)
+
     from app.controllers.menu import bp as menu_bp
     app.register_blueprint(menu_bp)
 

@@ -15,19 +15,21 @@ Ekte Mat Online is INFO212 Obligatory Assignment 4: a first version of an online
 ```
 python -m venv .venv && .venv\Scripts\activate     # Windows (source .venv/bin/activate elsewhere)
 pip install -r requirements.txt
+flask --app app seed                               # reset DB (instance/ektemat.sqlite) + synthetic demo data
+flask --app app init-db                            # reset DB to empty
 flask --app app run --debug                        # http://127.0.0.1:5000
 pytest                                             # all tests (pytest.ini puts the repo root on sys.path)
-pytest tests/test_app.py::test_home_page_renders   # a single test
+pytest tests/test_repositories.py::test_duplicate_email_is_rejected   # a single test
 ```
 
-Planned for phase 2, not implemented yet: `flask --app app init-db` (creates the SQLite database in `instance/`) and `flask --app app seed` (synthetic data, including an admin account).
+`seed` prints the demo logins (admin@example.test / admin123, customers kunde123); they're also in the README.
 
-Tests build the app with `create_app(TestConfig)`. Fixtures are in `tests/conftest.py`.
+Tests build the app with `create_app(TestConfig)` and a fresh SQLite file under pytest's `tmp_path` (`:memory:` doesn't work because each request opens its own connection). Fixtures `app`, `client` and `repos` are in `tests/conftest.py`. `tests/test_repositories.py` uses only the repository interface, so it can be reused for a Neo4j backend.
 
 ## Architecture
 
 MVC under `app/`:
-- **Model, `app/models/`:** dataclass entities and status enums (`entities.py`), abstract repository interfaces (`repositories.py`), domain rules (`services.py`), and the SQLite implementation in `app/models/sqlite/`.
+- **Model, `app/models/`:** dataclass entities and status enums (`entities.py`), abstract repository interfaces (`repositories.py`), the storage-independent `init-db`/`seed` CLI commands (`seed.py`), and the SQLite implementation in `app/models/sqlite/` (`db.py` keeps one connection per request in `flask.g`; `schema.sql`; `repositories.py`). `init_storage(app)` in `app/models/__init__.py` picks the backend from `config.STORAGE`. Domain rules for later phases go in `services.py` (not created yet).
 - **Controller, `app/controllers/`:** one Flask blueprint per area (auth, menu, cart, orders, admin_food, admin_orders, admin_questions), plus `login_required` and `admin_required` in `decorators.py`.
 - **View, `app/views/`:** Jinja2 templates. Flask is configured with `template_folder="views"`. CSS, JavaScript and images are in `app/static/`, and uploaded images go to `app/static/uploads/` (gitignored).
 

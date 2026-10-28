@@ -25,7 +25,18 @@ Then open http://127.0.0.1:5000.
 
 ## Seed data
 
-Coming in phase 2 (`flask --app app init-db` and `flask --app app seed`). All data will be synthetic.
+```
+flask --app app seed       # deletes all data and loads synthetic demo data
+flask --app app init-db    # deletes all data and leaves an empty database
+```
+
+The database is `instance/ektemat.sqlite` and is not committed. All data is synthetic. `seed` creates these local demo accounts:
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | admin@example.test | admin123 |
+| Customer | kari@example.test | kunde123 |
+| Customer | ola@example.test | kunde123 |
 
 ## Tests
 

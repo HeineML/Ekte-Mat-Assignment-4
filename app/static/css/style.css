@@ -27,7 +27,74 @@ body {
   padding: 1.5rem;
 }
 
+@media (max-width: 480px) {
+  .container { padding: 1rem; }
+  .site-header { padding: 0.75rem 1rem; }
+}
+
 .muted { color: #666; }
+
+/* Menu */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.tabs a {
+  padding: 0.35rem 0.9rem;
+  border: 1px solid #2f5d3a;
+  border-radius: 999px;
+  color: #2f5d3a;
+  text-decoration: none;
+}
+.tabs a.active,
+.tabs a:hover { background: #2f5d3a; color: #fff; }
+
+.menu-section { margin-bottom: 2rem; }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+  gap: 1rem;
+}
+
+.food-card {
+  min-width: 0;  /* don't let the image's natural width stretch the grid column */
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #e3ddd2;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.food-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 400 / 260;
+  object-fit: cover;
+}
+.food-card-body { padding: 0.75rem 1rem 1rem; }
+.food-card h3 { margin: 0 0 0.4rem; }
+.food-card p { margin: 0.3rem 0; }
+.food-card .price { font-weight: 700; font-size: 1.1rem; }
+.food-card .allergens { font-size: 0.9rem; }
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.badge {
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: #e8f0e9;
+  color: #2f5d3a;
+  font-size: 0.8rem;
+}
 
 .flash {
   padding: 0.6rem 1rem;

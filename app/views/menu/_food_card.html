@@ -1,0 +1,24 @@
+{% macro food_card(item) %}
+<article class="food-card">
+  {% if item.image %}
+    <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" alt="{{ item.name }}">
+  {% else %}
+    <img src="{{ url_for('static', filename='img/placeholder.svg') }}" alt="No picture yet">
+  {% endif %}
+  <div class="food-card-body">
+    <h3>{{ item.name }}</h3>
+    <p>{{ item.description }}</p>
+    <p class="price">{{ item.price_nok | nok }}</p>
+    <p class="muted">Minimum order: {{ item.minimum_quantity }}</p>
+    <p class="allergens">
+      {% if item.allergens %}Allergens: {{ item.allergens | join(', ') }}{% else %}No listed allergens{% endif %}
+    </p>
+    {% if item.dietary_labels %}
+      <ul class="badges">
+        {% for label in item.dietary_labels %}<li class="badge">{{ label }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+    {{ caller() if caller }}
+  </div>
+</article>
+{% endmacro %}

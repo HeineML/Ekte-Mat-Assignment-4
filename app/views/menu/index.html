@@ -1,7 +1,27 @@
 {% extends "base.html" %}
+{% from "menu/_food_card.html" import food_card %}
+
+{% block title %}Menu – Ekte Mat Online{% endblock %}
 
 {% block content %}
-  <h1>Welcome to Ekte Mat Online</h1>
-  <p>Catering for birthdays, confirmations, weddings, conferences and Christmas parties.</p>
-  <p class="muted">The menu is coming soon.</p>
+  <h1>Menu</h1>
+
+  <nav class="tabs" aria-label="Event categories">
+    <a href="{{ url_for('menu.index') }}" class="{{ 'active' if selected_id is none }}">All events</a>
+    {% for category in categories %}
+      <a href="{{ url_for('menu.index', event=category.id) }}"
+         class="{{ 'active' if category.id == selected_id }}">{{ category.name }}</a>
+    {% endfor %}
+  </nav>
+
+  {% for category, items in sections %}
+    <section class="menu-section">
+      <h2>{{ category.name }}</h2>
+      <div class="card-grid">
+        {% for item in items %}{{ food_card(item) }}{% endfor %}
+      </div>
+    </section>
+  {% else %}
+    <p class="muted">There are no dishes on the menu {{ 'for this event ' if selected_id is not none }}yet.</p>
+  {% endfor %}
 {% endblock %}

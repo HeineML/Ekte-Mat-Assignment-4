@@ -15,21 +15,23 @@ Ekte Mat Online is INFO212 Obligatory Assignment 4: a first version of an online
 ```
 python -m venv .venv && .venv\Scripts\activate     # Windows (source .venv/bin/activate elsewhere)
 pip install -r requirements.txt
+flask --app app seed                               # reset DB (instance/ektemat.sqlite) + synthetic demo data
+flask --app app init-db                            # reset DB to empty
 flask --app app run --debug                        # http://127.0.0.1:5000
 pytest                                             # all tests (pytest.ini puts the repo root on sys.path)
-pytest tests/test_app.py::test_home_page_renders   # a single test
+pytest tests/test_repositories.py::test_duplicate_email_is_rejected   # a single test
 ```
 
-Planned for phase 2, not implemented yet: `flask --app app init-db` (creates the SQLite database in `instance/`) and `flask --app app seed` (synthetic data, including an admin account).
+`seed` prints the demo logins (admin@example.test / admin123, customers kunde123); they're also in the README.
 
-Tests build the app with `create_app(TestConfig)`. Fixtures are in `tests/conftest.py`.
+Tests build the app with `create_app(TestConfig)` and a fresh SQLite file under pytest's `tmp_path` (`:memory:` doesn't work because each request opens its own connection). Fixtures `app`, `client` and `repos` are in `tests/conftest.py`. `tests/test_repositories.py` uses only the repository interface, so it can be reused for a Neo4j backend.
 
 ## Architecture
 
 MVC under `app/`:
-- **Model, `app/models/`:** dataclass entities and status enums (`entities.py`), abstract repository interfaces (`repositories.py`), domain rules (`services.py`), and the SQLite implementation in `app/models/sqlite/`.
+- **Model, `app/models/`:** dataclass entities and status enums (`entities.py`), abstract repository interfaces (`repositories.py`), the storage-independent `init-db`/`seed` CLI commands (`seed.py`), and the SQLite implementation in `app/models/sqlite/` (`db.py` keeps one connection per request in `flask.g`; `schema.sql`; `repositories.py`). `init_storage(app)` in `app/models/__init__.py` picks the backend from `config.STORAGE`. Domain rules that combine repository calls go in `services.py` (e.g. `menu_by_event()`); controllers call these instead of repeating logic.
 - **Controller, `app/controllers/`:** one Flask blueprint per area (auth, menu, cart, orders, admin_food, admin_orders, admin_questions), plus `login_required` and `admin_required` in `decorators.py`.
-- **View, `app/views/`:** Jinja2 templates. Flask is configured with `template_folder="views"`. CSS, JavaScript and images are in `app/static/`, and uploaded images go to `app/static/uploads/` (gitignored).
+- **View, `app/views/`:** Jinja2 templates. Flask is configured with `template_folder="views"`. CSS, JavaScript and images are in `app/static/`, and uploaded images go to `app/static/uploads/` (gitignored). Reuse the `food_card(item)` macro (`views/menu/_food_card.html`, accepts a `{% call %}` block for extra buttons) and the `nok` filter (`{{ price | nok }}` → "1 250 kr", defined in `app/__init__.py`).
 
 Storage must stay replaceable by Neo4j:
 - Controllers and templates get data only through `get_repos()` and entities from `app.models`. They never import `sqlite3` or `app.models.sqlite`.
@@ -37,7 +39,7 @@ Storage must stay replaceable by Neo4j:
 - Multi-step writes, such as an order together with its items, happen inside one repository method.
 - Repository tests target the interface, so they can be reused for a Neo4j implementation.
 
-The shopping cart is kept in the Flask session as `{food_item_id: quantity}` until checkout.
+The shopping cart is kept in the Flask session as `session["cart"] = {"<food_item_id>": quantity}` (string keys, because the session is JSON) until checkout. Only `app/controllers/cart.py` touches the session format (`_load()`/`_save()`). Pricing and rules live in `services.py`: `build_cart(raw)` returns a `Cart` with current prices and drops unpublished or deleted items, and `check_quantity(item, qty)` enforces the minimum order quantity (reuse it at checkout).
 
 ## Domain rules that are easy to get wrong
 

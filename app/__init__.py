@@ -1,7 +1,7 @@
 """Ekte Mat Online – Flask application factory."""
 import os
 
-from flask import Flask, flash, redirect, request
+from flask import Flask, flash, redirect, render_template, request
 
 from app.config import Config
 
@@ -17,6 +17,9 @@ def create_app(config_class=Config):
     init_storage(app)
 
     app.add_template_filter(format_nok, "nok")
+
+    for code, (title, message) in ERROR_PAGES.items():
+        app.register_error_handler(code, _error_page(code, title, message))
 
     @app.errorhandler(413)
     def upload_too_large(error):
@@ -45,3 +48,16 @@ def create_app(config_class=Config):
 def format_nok(amount):
     """Whole NOK with a space as thousands separator: 1250 -> '1 250 kr'."""
     return f"{amount:,} kr".replace(",", " ")
+
+
+ERROR_PAGES = {
+    400: ("Bad request", "The form contained a value we didn't understand."),
+    403: ("Access denied", "This page is only for administrators."),
+    404: ("Page not found", "The page doesn't exist, or you don't have access to it."),
+}
+
+
+def _error_page(code, title, message):
+    def handler(error):
+        return render_template("errors/error.html", code=code, title=title, message=message), code
+    return handler

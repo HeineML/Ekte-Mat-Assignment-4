@@ -24,14 +24,14 @@ pytest tests/test_repositories.py::test_duplicate_email_is_rejected   # a single
 
 `seed` prints the demo logins (admin@example.test / admin123, customers kunde123); they're also in the README.
 
-Tests build the app with `create_app(TestConfig)` and a fresh SQLite file under pytest's `tmp_path` (`:memory:` doesn't work because each request opens its own connection). Fixtures `app`, `client` and `repos` are in `tests/conftest.py`. `tests/test_repositories.py` uses only the repository interface, so it can be reused for a Neo4j backend.
+Tests build the app with `create_app(TestConfig)` and a fresh SQLite file under pytest's `tmp_path` (`:memory:` doesn't work because each request opens its own connection). Fixtures `app`, `client`, `repos` and `users` (an admin plus customers Kari and Ola, password `secret123`) and the `login(client, email)` helper are in `tests/conftest.py`; `UPLOAD_FOLDER` also points into `tmp_path`. `tests/test_architecture.py` fails if a controller or template mentions `sqlite`. `tests/test_repositories.py` uses only the repository interface, so it can be reused for a Neo4j backend.
 
 ## Architecture
 
 MVC under `app/`:
-- **Model, `app/models/`:** dataclass entities and status enums (`entities.py`), abstract repository interfaces (`repositories.py`), the storage-independent `init-db`/`seed` CLI commands (`seed.py`), and the SQLite implementation in `app/models/sqlite/` (`db.py` keeps one connection per request in `flask.g`; `schema.sql`; `repositories.py`). `init_storage(app)` in `app/models/__init__.py` picks the backend from `config.STORAGE`. Domain rules that combine repository calls go in `services.py` (e.g. `menu_by_event()`); controllers call these instead of repeating logic.
+- **Model, `app/models/`:** dataclass entities and status enums (`entities.py`), abstract repository interfaces (`repositories.py`), the storage-independent `init-db`/`seed` CLI commands (`seed.py`), and the SQLite implementation in `app/models/sqlite/` (`db.py` keeps one connection per request in `flask.g`; `schema.sql`; `repositories.py`). `init_storage(app)` in `app/models/__init__.py` picks the backend from `config.STORAGE`. Domain rules and validation go in `services.py` (`menu_by_event`, `build_cart`, `check_quantity`, `register_customer`, `authenticate`, `place_order`, `save_food_item`, `delete_food_item`, `ask_question`, `answer_question`, `customers_by_id`); they return `(result, [error messages])` and controllers flash the errors instead of repeating logic. Picture files are handled by `images.py` (random filenames in `config.UPLOAD_FOLDER`).
 - **Controller, `app/controllers/`:** one Flask blueprint per area (auth, menu, cart, orders, admin_food, admin_orders, admin_questions), plus `login_required` and `admin_required` in `decorators.py` and `safe_next()`/`form_int()` in `helpers.py`. `auth.py` loads the logged-in user into `g.user` (or `None`) before every request from `session["user_id"]`; templates use `g.user` too.
-- **View, `app/views/`:** Jinja2 templates. Flask is configured with `template_folder="views"`. CSS, JavaScript and images are in `app/static/`, and uploaded images go to `app/static/uploads/` (gitignored). Reuse the `food_card(item)` macro (`views/menu/_food_card.html`, accepts a `{% call %}` block for extra buttons) and the `nok` filter (`{{ price | nok }}` → "1 250 kr", defined in `app/__init__.py`).
+- **View, `app/views/`:** Jinja2 templates. Flask is configured with `template_folder="views"`. CSS, JavaScript and images are in `app/static/`, and uploaded images go to `app/static/uploads/` (gitignored). Status badges and the order items/guest-groups tables are macros in `views/orders/_status.html`, shared by customer and admin pages; 400/403/404 use `views/errors/error.html` (handlers in `app/__init__.py`). Reuse the `food_card(item)` macro (`views/menu/_food_card.html`, accepts a `{% call %}` block for extra buttons) and the `nok` filter (`{{ price | nok }}` → "1 250 kr", defined in `app/__init__.py`).
 
 Storage must stay replaceable by Neo4j:
 - Controllers and templates get data only through `get_repos()` and entities from `app.models`. They never import `sqlite3` or `app.models.sqlite`.
@@ -55,6 +55,7 @@ The shopping cart is kept in the Flask session as `session["cart"] = {"<food_ite
 - Work in the small phases listed in `docs/plans/00-architecture.md`, one phase at a time and in that order.
 - Before a larger feature: use Plan mode, have the group agree on the plan, and save it as `docs/plans/NN-name.md` (goal, requirement IDs, files, steps, verification, status). Then implement it.
 - Reference requirement IDs (C1–C5, A1–A4) in plans and commit messages to keep requirements traceable.
+- Status (2026-11-03): phases 0–12 are implemented; phase 13 (optional extensions) was skipped by the group's decision. Plans 05–12 were written and implemented in one session and still need the group's review, including their **[Decision]** points. `docs/plans/12-hardening.md` has the requirement traceability table.
 
 ## Security and data
 

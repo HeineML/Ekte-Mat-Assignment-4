@@ -106,6 +106,22 @@ def seed_data():
         status=OrderStatus.IN_PREPARATION, payment_status=PaymentStatus.INVOICED,
     ))
 
+    repos.orders.add(Order(
+        customer_id=ola.id, event_date=today - timedelta(days=14), number_of_guests=12,
+        delivery_address="Eksempelgata 12, 5003 Bergen",
+        items=[line("Baked salmon with dill sauce", 12), line("Fruit platter", 12)],
+        guest_groups=[GuestGroup("Colleagues", 12, allergy_notes="One guest is allergic to fish; "
+                                 "the kitchen made one portion without salmon.")],
+        status=OrderStatus.DELIVERED, payment_status=PaymentStatus.PAID,
+    ))
+    repos.orders.add(Order(
+        customer_id=kari.id, event_date=today + timedelta(days=90), number_of_guests=60,
+        delivery_address="Testveien 1, 5000 Bergen",
+        items=[line("Shrimp sandwich", 60), line("Cream cake", 5)],
+        guest_groups=[GuestGroup("Wedding guests", 60)],
+        status=OrderStatus.CANCELLED,
+    ))
+
     answered = repos.questions.add(Question(
         order_id=confirmation.id, customer_id=kari.id,
         question="Can the children's portions be marked so we know which ones are milk-free?",
@@ -117,7 +133,7 @@ def seed_data():
     ))
 
     return {"users": len(users), "categories": len(categories), "food items": len(food),
-            "orders": 3, "questions": 2}
+            "orders": 5, "questions": 2}
 
 
 def register_commands(app):

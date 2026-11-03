@@ -11,6 +11,7 @@ from app.models.entities import Role, User
 def app(tmp_path):
     app = create_app(TestConfig)
     app.config["DATABASE"] = str(tmp_path / "test.sqlite")
+    app.config["UPLOAD_FOLDER"] = str(tmp_path / "uploads")
     with app.app_context():
         get_repos().reset()
     return app

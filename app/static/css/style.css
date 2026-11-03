@@ -348,3 +348,26 @@ select, input[type="date"] {
   border-left: 3px solid #2f5d3a;
   background: #f3f7f3;
 }
+
+/* Pictures (A2) */
+.image-field {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.image-preview {
+  width: 200px;
+  max-width: 100%;
+  aspect-ratio: 400 / 260;
+  object-fit: cover;
+  border: 1px solid #e3ddd2;
+  border-radius: 6px;
+}
+.thumbnail {
+  display: block;
+  width: 64px;
+  aspect-ratio: 400 / 260;
+  object-fit: cover;
+  border-radius: 4px;
+}

@@ -1,10 +1,10 @@
-"""Admin: food items (A1). Every route requires the admin role."""
+"""Admin: food items (A1) and their pictures (A2). Every route requires the admin role."""
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 
 from app.controllers.decorators import admin_required
 from app.controllers.helpers import form_int
 from app.models import get_repos
-from app.models.services import save_food_item
+from app.models.services import delete_food_item, save_food_item
 
 bp = Blueprint("admin_food", __name__, url_prefix="/admin/food")
 
@@ -19,6 +19,7 @@ def _item_or_404(item_id):
 def _form(item):
     """Show the form for a new (item=None) or existing food item, and save it on POST."""
     if request.method == "POST":
+        upload = request.files.get("image")
         saved, errors = save_food_item(
             item,
             name=request.form.get("name", ""),
@@ -29,6 +30,8 @@ def _form(item):
             allergens=request.form.get("allergens", ""),
             dietary_labels=request.form.get("dietary_labels", ""),
             published="published" in request.form,
+            image_file=upload if upload and upload.filename else None,
+            remove_image="remove_image" in request.form,
         )
         if saved:
             flash(f"Saved {saved.name}.", "success")
@@ -81,6 +84,6 @@ def toggle_published(item_id):
 @admin_required
 def delete(item_id):
     item = _item_or_404(item_id)
-    get_repos().food.delete(item.id)
+    delete_food_item(item)
     flash(f"Deleted {item.name}. Existing orders keep its name and price.", "success")
     return redirect(url_for("admin_food.index"))

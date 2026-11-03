@@ -12,12 +12,17 @@
     <div class="table-scroll">
       <table class="cart-table">
         <thead>
-          <tr><th>Name</th><th class="num">Price</th><th class="num">Minimum</th><th>Event categories</th>
+          <tr><th>Picture</th><th>Name</th><th class="num">Price</th><th class="num">Minimum</th><th>Event categories</th>
               <th>Status</th><th></th></tr>
         </thead>
         <tbody>
           {% for item in items %}
             <tr>
+              <td>
+                <img class="thumbnail" alt="{{ item.name if item.image else 'No picture' }}"
+                     src="{{ url_for('static', filename='uploads/' ~ item.image) if item.image
+                             else url_for('static', filename='img/placeholder.svg') }}">
+              </td>
               <td>{{ item.name }}</td>
               <td class="num">{{ item.price_nok | nok }}</td>
               <td class="num">{{ item.minimum_quantity }}</td>

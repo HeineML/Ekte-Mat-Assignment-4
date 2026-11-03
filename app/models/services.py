@@ -4,7 +4,7 @@ from datetime import date
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app.models import get_repos
+from app.models import get_repos, images
 from app.models.entities import FoodItem, GuestGroup, Order, OrderItem, Question, Role, User
 from app.models.repositories import EmailAlreadyRegistered
 
@@ -176,11 +176,13 @@ def parse_list(text):
 
 
 def save_food_item(item, *, name, description, price_nok, minimum_quantity, category_ids,
-                   allergens, dietary_labels, published):
+                   allergens, dietary_labels, published, image_file=None, remove_image=False):
     """Create (item=None) or update a food item. Returns (item, []) or (None, [error messages]).
 
     price_nok and minimum_quantity are None if the input wasn't a whole number. allergens and
-    dietary_labels are comma-separated text. An existing item keeps its image.
+    dietary_labels are comma-separated text. image_file is an uploaded picture (A2) that replaces
+    the current one; without it the item keeps its image unless remove_image is set. Files are only
+    written once everything is valid, and a replaced picture's file is deleted.
     """
     food = get_repos().food
     name, description = name.strip(), description.strip()
@@ -197,17 +199,36 @@ def save_food_item(item, *, name, description, price_nok, minimum_quantity, cate
         errors.append("The minimum order quantity must be a whole number, at least 1.")
     if not categories:
         errors.append("Choose at least one event category, otherwise the dish won't appear on the menu.")
+    if image_file is not None and not images.is_allowed(image_file):
+        errors.append("The picture must be a PNG, JPEG, GIF or WebP file.")
     if errors:
         return None, errors
 
+    old_image = item.image if item else None
+    image = old_image
+    if image_file is not None:
+        image = images.save_image(image_file)
+    elif remove_image:
+        image = None
+
     fields = dict(name=name, description=description, price_nok=price_nok, minimum_quantity=minimum_quantity,
-                  published=published, allergens=parse_list(allergens),
+                  published=published, image=image, allergens=parse_list(allergens),
                   dietary_labels=parse_list(dietary_labels), event_categories=categories)
     if item is None:
-        return food.add(FoodItem(**fields)), []
-    for key, value in fields.items():
-        setattr(item, key, value)
-    return food.update(item), []
+        saved = food.add(FoodItem(**fields))
+    else:
+        for key, value in fields.items():
+            setattr(item, key, value)
+        saved = food.update(item)
+    if old_image and old_image != image:
+        images.delete_image(old_image)
+    return saved, []
+
+
+def delete_food_item(item):
+    """Delete the food item and its picture. Old orders keep the dish's name and price."""
+    get_repos().food.delete(item.id)
+    images.delete_image(item.image)
 
 
 # Admin orders (A3).

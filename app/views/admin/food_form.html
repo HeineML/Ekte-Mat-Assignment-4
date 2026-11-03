@@ -6,7 +6,7 @@
   <p><a href="{{ url_for('admin_food.index') }}">← Food items</a></p>
   <h1>{{ 'Edit ' ~ item.name if item else 'New food item' }}</h1>
 
-  <form class="form" method="post">
+  <form class="form" method="post" enctype="multipart/form-data">
     <label>Name
       <input type="text" name="name" value="{{ values.get('name', '') }}" required>
     </label>
@@ -42,6 +42,27 @@
       <input type="text" name="dietary_labels" value="{{ values.get('dietary_labels', '') }}">
     </label>
 
+    <fieldset>
+      <legend>Picture</legend>
+      <div class="image-field">
+        {% set current = url_for('static', filename='uploads/' ~ item.image) if item and item.image
+                         else url_for('static', filename='img/placeholder.svg') %}
+        <img id="image-preview" class="image-preview" src="{{ current }}" alt="Picture preview">
+        <div>
+          <label>Choose a picture <span class="hint">PNG, JPEG, GIF or WebP, at most 5 MB</span>
+            <input type="file" name="image" accept="image/png,image/jpeg,image/gif,image/webp"
+                   data-preview="image-preview">
+          </label>
+          <p id="image-preview-note" class="hint" hidden>Preview only. The picture is saved when you click Save.</p>
+          {% if item and item.image %}
+            <label class="checkbox">
+              <input type="checkbox" name="remove_image"> Remove the current picture
+            </label>
+          {% endif %}
+        </div>
+      </div>
+    </fieldset>
+
     <label class="checkbox">
       <input type="checkbox" name="published" {{ 'checked' if values.get('published') }}>
       Published (visible to customers)
@@ -49,4 +70,8 @@
 
     <button type="submit">Save</button>
   </form>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/image-preview.js') }}"></script>
 {% endblock %}

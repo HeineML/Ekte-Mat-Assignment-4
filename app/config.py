@@ -11,6 +11,9 @@ class Config:
     SESSION_COOKIE_SAMESITE = "Lax"
     STORAGE = "sqlite"
     DATABASE = os.environ.get("DATABASE", os.path.join(BASE_DIR, "instance", "ektemat.sqlite"))
+    # Uploaded food pictures (A2). Served as static files, so the folder must stay under app/static.
+    UPLOAD_FOLDER = os.path.join(BASE_DIR, "app", "static", "uploads")
+    MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5 MB per request
 
 
 class TestConfig(Config):
@@ -19,3 +22,4 @@ class TestConfig(Config):
     # Set per test by tests/conftest.py. ":memory:" can't be used because every
     # new connection would get its own empty database.
     DATABASE = None
+    UPLOAD_FOLDER = None

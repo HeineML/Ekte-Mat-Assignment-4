@@ -1,7 +1,7 @@
 """Ekte Mat Online – Flask application factory."""
 import os
 
-from flask import Flask
+from flask import Flask, flash, redirect, request
 
 from app.config import Config
 
@@ -17,6 +17,12 @@ def create_app(config_class=Config):
     init_storage(app)
 
     app.add_template_filter(format_nok, "nok")
+
+    @app.errorhandler(413)
+    def upload_too_large(error):
+        mb = app.config["MAX_CONTENT_LENGTH"] // (1024 * 1024)
+        flash(f"The picture is too large. The limit is {mb} MB.", "error")
+        return redirect(request.path)
 
     from app.controllers.menu import bp as menu_bp
     from app.controllers.cart import bp as cart_bp

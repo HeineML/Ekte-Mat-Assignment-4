@@ -55,7 +55,7 @@ The shopping cart is kept in the Flask session as `session["cart"] = {"<food_ite
 - Work in the small phases listed in `docs/plans/00-architecture.md`, one phase at a time and in that order.
 - Before a larger feature: use Plan mode, have the group agree on the plan, and save it as `docs/plans/NN-name.md` (goal, requirement IDs, files, steps, verification, status). Then implement it.
 - Reference requirement IDs (C1–C5, A1–A4) in plans and commit messages to keep requirements traceable.
-- Status (2026-11-03): phases 0–12 are implemented; phase 13 (optional extensions) was skipped by the group's decision. Plans 05–12 were written and implemented in one session and still need the group's review, including their **[Decision]** points. `docs/plans/12-hardening.md` has the requirement traceability table.
+- Status (2026-11-03): phases 0–12 are done and agreed by the group, and the assessed version is tagged `v1.0`; phase 13 (optional extensions) was skipped by the group's decision. `docs/plans/12-hardening.md` has the requirement traceability table and `docs/report.md` the report material.
 
 ## Security and data
 

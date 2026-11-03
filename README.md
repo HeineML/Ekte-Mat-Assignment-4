@@ -2,7 +2,9 @@
 
 INFO212 Obligatory Assignment 4: a first version of an online catering and ordering system, built with Flask using MVC.
 
-The requirements are in [docs/requirements.md](docs/requirements.md). The architecture and the plan for each phase are in [docs/plans/](docs/plans/); [12-hardening.md](docs/plans/12-hardening.md) maps every requirement to its routes and tests.
+The requirements are in [docs/requirements.md](docs/requirements.md). The architecture and the plan for each phase are in [docs/plans/](docs/plans/); [12-hardening.md](docs/plans/12-hardening.md) maps every requirement to its routes and tests. Report material (features with screenshots, diagrams, design and reflection) is in [docs/report.md](docs/report.md).
+
+Assessed version: tag `v1.0`.
 
 Storage: **SQLite** (Neo4j is not used). All storage access goes through repository interfaces in `app/models/`, so a Neo4j backend can be added later without changing controllers or templates.
 
@@ -39,7 +41,7 @@ flask --app app seed       # deletes all data and loads synthetic demo data
 flask --app app init-db    # deletes all data and leaves an empty database
 ```
 
-The database is `instance/ektemat.sqlite` and is not committed. All data is synthetic. `seed` creates 11 dishes with photos (one unpublished), 5 orders in different statuses, 2 questions (one answered) and these local demo accounts:
+The database is `instance/ektemat.sqlite` and is not committed. All data is synthetic. `seed` creates 11 dishes with photos (one unpublished), 6 orders (one in each order status), 2 questions (one answered) and these local demo accounts:
 
 | Role | Email | Password |
 |---|---|---|

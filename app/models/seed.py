@@ -150,6 +150,13 @@ def seed_data():
         guest_groups=[GuestGroup("Wedding guests", 60)],
         status=OrderStatus.CANCELLED,
     ))
+    repos.orders.add(Order(
+        customer_id=ola.id, event_date=today + timedelta(days=2), number_of_guests=150,
+        delivery_address="Eksempelgata 12, 5003 Bergen",
+        items=[line("Open sandwiches", 300)],
+        guest_groups=[GuestGroup("Conference guests", 150)],
+        status=OrderStatus.REJECTED,
+    ))
 
     answered = repos.questions.add(Question(
         order_id=confirmation.id, customer_id=kari.id,
@@ -162,7 +169,7 @@ def seed_data():
     ))
 
     return {"users": len(users), "categories": len(categories), "food items": len(food),
-            "orders": 5, "questions": 2}
+            "orders": 6, "questions": 2}
 
 
 def register_commands(app):

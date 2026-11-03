@@ -1,6 +1,6 @@
 # 07 – My Orders
 
-**Status:** implemented 2026-11-03. Written and implemented in one session at the user's request; the group has **not yet reviewed** this plan.
+**Status:** done (2026-11-03). Written and implemented in one session at the user's request, one phase and one commit at a time, and **agreed by the group on 2026-11-03 after implementation**. The decisions marked **[Decision]** were accepted as written.
 
 ## Context
 

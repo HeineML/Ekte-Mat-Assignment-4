@@ -161,3 +161,50 @@ def place_order(customer_id, cart, event_date, number_of_guests, delivery_addres
         guest_groups=guest_groups or [GuestGroup("All guests", number_of_guests)],
     )
     return get_repos().orders.add(order), []
+
+
+# Admin food items (A1).
+
+def parse_list(text):
+    """'gluten, milk,, gluten' -> ['gluten', 'milk']: comma-separated, trimmed, no blanks or duplicates."""
+    values = []
+    for part in text.split(","):
+        part = part.strip()
+        if part and part not in values:
+            values.append(part)
+    return values
+
+
+def save_food_item(item, *, name, description, price_nok, minimum_quantity, category_ids,
+                   allergens, dietary_labels, published):
+    """Create (item=None) or update a food item. Returns (item, []) or (None, [error messages]).
+
+    price_nok and minimum_quantity are None if the input wasn't a whole number. allergens and
+    dietary_labels are comma-separated text. An existing item keeps its image.
+    """
+    food = get_repos().food
+    name, description = name.strip(), description.strip()
+    categories = [c for c in (food.get_category(i) for i in category_ids) if c is not None]
+
+    errors = []
+    if not name:
+        errors.append("Please enter a name.")
+    if not description:
+        errors.append("Please enter a description.")
+    if price_nok is None or price_nok < 0:
+        errors.append("The price must be a whole number of NOK, 0 or more.")
+    if minimum_quantity is None or minimum_quantity < 1:
+        errors.append("The minimum order quantity must be a whole number, at least 1.")
+    if not categories:
+        errors.append("Choose at least one event category, otherwise the dish won't appear on the menu.")
+    if errors:
+        return None, errors
+
+    fields = dict(name=name, description=description, price_nok=price_nok, minimum_quantity=minimum_quantity,
+                  published=published, allergens=parse_list(allergens),
+                  dietary_labels=parse_list(dietary_labels), event_categories=categories)
+    if item is None:
+        return food.add(FoodItem(**fields)), []
+    for key, value in fields.items():
+        setattr(item, key, value)
+    return food.update(item), []

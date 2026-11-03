@@ -23,6 +23,12 @@
         <a href="{{ url_for('auth.register') }}">Register</a>
       {% endif %}
     </nav>
+    {% if g.user and g.user.is_admin %}
+      <nav class="admin-nav" aria-label="Admin">
+        <span>Admin:</span>
+        <a href="{{ url_for('admin_food.index') }}">Food</a>
+      </nav>
+    {% endif %}
   </header>
 
   <main class="container">

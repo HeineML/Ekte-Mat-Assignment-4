@@ -260,3 +260,43 @@ legend { font-weight: 700; padding: 0 0.3rem; }
 }
 .details dt { font-weight: 600; }
 .details dd { margin: 0; white-space: pre-line; }
+
+/* Admin */
+.admin-nav {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #4b7a56;
+  color: #d7e6da;
+  font-size: 0.95rem;
+}
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+.actions form { margin: 0; }
+button.danger { background: #fff; border-color: #a33; color: #a33; }
+button.danger:hover { background: #f8e1e1; }
+.checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+}
+.form .checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: normal;
+}
+.hint { font-weight: normal; font-size: 0.85rem; color: #666; }

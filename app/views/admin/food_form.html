@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit ' ~ item.name if item else 'New food item' }} – Admin – Ekte Mat Online{% endblock %}
+
+{% block content %}
+  <p><a href="{{ url_for('admin_food.index') }}">← Food items</a></p>
+  <h1>{{ 'Edit ' ~ item.name if item else 'New food item' }}</h1>
+
+  <form class="form" method="post">
+    <label>Name
+      <input type="text" name="name" value="{{ values.get('name', '') }}" required>
+    </label>
+    <label>Description
+      <textarea name="description" rows="3" required>{{ values.get('description', '') }}</textarea>
+    </label>
+    <div class="form-row">
+      <label>Price (NOK)
+        <input type="number" name="price_nok" min="0" value="{{ values.get('price_nok', '') }}" required>
+      </label>
+      <label>Minimum order quantity
+        <input type="number" name="minimum_quantity" min="1" value="{{ values.get('minimum_quantity', '') }}" required>
+      </label>
+    </div>
+
+    <fieldset>
+      <legend>Event categories</legend>
+      <div class="checkboxes">
+        {% for category in categories %}
+          <label class="checkbox">
+            <input type="checkbox" name="category_ids" value="{{ category.id }}"
+                   {{ 'checked' if category.id in selected }}>
+            {{ category.name }}
+          </label>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+    <label>Allergens <span class="hint">comma-separated, e.g. gluten, milk, eggs</span>
+      <input type="text" name="allergens" value="{{ values.get('allergens', '') }}">
+    </label>
+    <label>Dietary labels <span class="hint">comma-separated, e.g. vegetarian, gluten-free</span>
+      <input type="text" name="dietary_labels" value="{{ values.get('dietary_labels', '') }}">
+    </label>
+
+    <label class="checkbox">
+      <input type="checkbox" name="published" {{ 'checked' if values.get('published') }}>
+      Published (visible to customers)
+    </label>
+
+    <button type="submit">Save</button>
+  </form>
+{% endblock %}

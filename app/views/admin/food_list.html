@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Food items – Admin – Ekte Mat Online{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Food items</h1>
+    <a class="button" href="{{ url_for('admin_food.new') }}">New food item</a>
+  </div>
+
+  {% if items %}
+    <div class="table-scroll">
+      <table class="cart-table">
+        <thead>
+          <tr><th>Name</th><th class="num">Price</th><th class="num">Minimum</th><th>Event categories</th>
+              <th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+            <tr>
+              <td>{{ item.name }}</td>
+              <td class="num">{{ item.price_nok | nok }}</td>
+              <td class="num">{{ item.minimum_quantity }}</td>
+              <td>{{ item.event_categories | map(attribute='name') | join(', ') }}</td>
+              <td>
+                {% if item.published %}<span class="status status-paid">Published</span>
+                {% else %}<span class="status">Unpublished</span>{% endif %}
+              </td>
+              <td>
+                <div class="actions">
+                  <form method="post" action="{{ url_for('admin_food.toggle_published', item_id=item.id) }}">
+                    <button type="submit" class="secondary">{{ 'Unpublish' if item.published else 'Publish' }}</button>
+                  </form>
+                  <a class="button" href="{{ url_for('admin_food.edit', item_id=item.id) }}">Edit</a>
+                  <form method="post" action="{{ url_for('admin_food.delete', item_id=item.id) }}"
+                        onsubmit='return confirm({{ ("Delete " ~ item.name ~ "? This cannot be undone.") | tojson }});'>
+                    <button type="submit" class="danger">Delete</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>There are no food items yet.</p>
+  {% endif %}
+{% endblock %}

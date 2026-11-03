@@ -24,12 +24,14 @@ def create_app(config_class=Config):
     from app.controllers.orders import bp as orders_bp
     from app.controllers.admin_food import bp as admin_food_bp
     from app.controllers.admin_orders import bp as admin_orders_bp
+    from app.controllers.admin_questions import bp as admin_questions_bp
     app.register_blueprint(menu_bp)
     app.register_blueprint(cart_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(orders_bp)
     app.register_blueprint(admin_food_bp)
     app.register_blueprint(admin_orders_bp)
+    app.register_blueprint(admin_questions_bp)
 
     return app
 

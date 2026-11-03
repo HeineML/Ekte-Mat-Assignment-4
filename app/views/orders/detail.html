@@ -17,4 +17,29 @@
   </dl>
 
   {{ order_contents(order) }}
+
+  <h2 id="questions">Questions</h2>
+  {% for question in questions %}
+    <article class="question">
+      <p class="muted small">You asked {{ question.created_at.strftime('%Y-%m-%d %H:%M') if question.created_at }}</p>
+      <p class="question-text">{{ question.question }}</p>
+      {% if question.is_answered %}
+        <div class="answer">
+          <p class="muted small">Answer from Ekte Mat{{ ', ' ~ question.answered_at.strftime('%Y-%m-%d %H:%M') if question.answered_at }}</p>
+          <p class="question-text">{{ question.answer }}</p>
+        </div>
+      {% else %}
+        <p><span class="status status-submitted">Waiting for an answer</span></p>
+      {% endif %}
+    </article>
+  {% else %}
+    <p class="muted">No questions about this order yet.</p>
+  {% endfor %}
+
+  <form class="form form-wide" method="post" action="{{ url_for('orders.ask', order_id=order.id) }}">
+    <label>Ask a question about this order
+      <textarea name="question" rows="3" maxlength="2000" required></textarea>
+    </label>
+    <button type="submit">Send question</button>
+  </form>
 {% endblock %}

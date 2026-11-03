@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "admin/_question.html" import admin_question %}
+
+{% block title %}Questions – Admin – Ekte Mat Online{% endblock %}
+
+{% block content %}
+  <h1>Customer questions</h1>
+
+  <nav class="tabs" aria-label="Filter questions">
+    <a href="{{ url_for('admin_questions.index') }}" class="{{ 'active' if not unanswered_only }}">All</a>
+    <a href="{{ url_for('admin_questions.index', unanswered=1) }}" class="{{ 'active' if unanswered_only }}">Unanswered</a>
+  </nav>
+
+  {% for question in questions %}
+    {{ admin_question(question, customers[question.customer_id]) }}
+  {% else %}
+    <p>{{ 'All questions have been answered.' if unanswered_only else 'There are no questions yet.' }}</p>
+  {% endfor %}
+{% endblock %}

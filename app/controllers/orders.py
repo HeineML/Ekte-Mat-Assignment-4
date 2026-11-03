@@ -1,4 +1,4 @@
-"""Customer orders: checkout (C3) and my orders (C4). Customers only ever see their own orders."""
+"""Customer orders: checkout (C3), my orders (C4) and questions (C5). Customers only see their own."""
 from datetime import date, timedelta
 
 from flask import Blueprint, abort, flash, g, redirect, render_template, request, url_for
@@ -7,7 +7,7 @@ from app.controllers.cart import clear_cart, raw_cart
 from app.controllers.decorators import login_required
 from app.models import get_repos
 from app.models.entities import GuestGroup
-from app.models.services import build_cart, place_order
+from app.models.services import ask_question, build_cart, place_order
 
 bp = Blueprint("orders", __name__)
 
@@ -94,4 +94,18 @@ def list_orders():
 @bp.route("/orders/<int:order_id>")
 @login_required
 def detail(order_id):
-    return render_template("orders/detail.html", order=own_order_or_404(order_id))
+    order = own_order_or_404(order_id)
+    return render_template("orders/detail.html", order=order,
+                           questions=get_repos().questions.list_for_order(order.id))
+
+
+@bp.post("/orders/<int:order_id>/questions")
+@login_required
+def ask(order_id):
+    order = own_order_or_404(order_id)
+    question, errors = ask_question(order, g.user.id, request.form.get("question", ""))
+    for error in errors:
+        flash(error, "error")
+    if question:
+        flash("Your question has been sent. We'll answer as soon as we can.", "success")
+    return redirect(url_for("orders.detail", order_id=order.id) + "#questions")

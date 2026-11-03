@@ -5,7 +5,7 @@ from datetime import date
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.models import get_repos
-from app.models.entities import FoodItem, GuestGroup, Order, OrderItem, Role, User
+from app.models.entities import FoodItem, GuestGroup, Order, OrderItem, Question, Role, User
 from app.models.repositories import EmailAlreadyRegistered
 
 MIN_PASSWORD_LENGTH = 8
@@ -212,7 +212,40 @@ def save_food_item(item, *, name, description, price_nok, minimum_quantity, cate
 
 # Admin orders (A3).
 
-def customers_by_id(orders):
-    """{customer_id: User} for the customers of these orders, so lists can show names."""
+def customers_by_id(records):
+    """{customer_id: User} for the customers of these orders or questions, so lists can show names."""
     users = get_repos().users
-    return {customer_id: users.get(customer_id) for customer_id in {o.customer_id for o in orders}}
+    return {customer_id: users.get(customer_id) for customer_id in {r.customer_id for r in records}}
+
+
+# Questions and answers (C5, A4).
+
+MAX_QUESTION_LENGTH = 2000
+
+
+def _check_text(text, what):
+    if not text:
+        return [f"Please write {what}."]
+    if len(text) > MAX_QUESTION_LENGTH:
+        return [f"The {what.split()[-1]} can be at most {MAX_QUESTION_LENGTH} characters."]
+    return []
+
+
+def ask_question(order, customer_id, text):
+    """Save a customer's question about their order. Returns (question, []) or (None, [errors]).
+
+    The caller must already have checked that the order belongs to the customer.
+    """
+    text = text.strip()
+    if errors := _check_text(text, "a question"):
+        return None, errors
+    return get_repos().questions.add(Question(order_id=order.id, customer_id=customer_id, question=text)), []
+
+
+def answer_question(question, text):
+    """Store (or replace) the admin's answer. Returns a list of error messages, empty on success."""
+    text = text.strip()
+    if errors := _check_text(text, "an answer"):
+        return errors
+    get_repos().questions.answer(question.id, text)
+    return []

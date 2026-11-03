@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "orders/_status.html" import order_status, payment_status, order_contents %}
+{% from "admin/_question.html" import admin_question %}
 
 {% block title %}Order #{{ order.id }} – Admin – Ekte Mat Online{% endblock %}
 
@@ -41,4 +42,11 @@
   </dl>
 
   {{ order_contents(order) }}
+
+  <h2 id="questions">Questions</h2>
+  {% for question in questions %}
+    {{ admin_question(question, show_order=False) }}
+  {% else %}
+    <p class="muted">The customer hasn't asked any questions about this order.</p>
+  {% endfor %}
 {% endblock %}

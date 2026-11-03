@@ -53,6 +53,7 @@ def detail(order_id):
     order = _order_or_404(order_id)
     return render_template("admin/order_detail.html", order=order,
                            customer=get_repos().users.get(order.customer_id),
+                           questions=get_repos().questions.list_for_order(order.id),
                            statuses=list(OrderStatus), payment_statuses=list(PaymentStatus))
 
 

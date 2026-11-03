@@ -208,3 +208,11 @@ def save_food_item(item, *, name, description, price_nok, minimum_quantity, cate
     for key, value in fields.items():
         setattr(item, key, value)
     return food.update(item), []
+
+
+# Admin orders (A3).
+
+def customers_by_id(orders):
+    """{customer_id: User} for the customers of these orders, so lists can show names."""
+    users = get_repos().users
+    return {customer_id: users.get(customer_id) for customer_id in {o.customer_id for o in orders}}

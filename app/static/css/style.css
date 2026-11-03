@@ -300,3 +300,33 @@ button.danger:hover { background: #f8e1e1; }
   font-weight: normal;
 }
 .hint { font-weight: normal; font-size: 0.85rem; color: #666; }
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: end;
+  margin-bottom: 1.25rem;
+}
+.filters label, .status-forms label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+select, input[type="date"] {
+  padding: 0.35rem 0.4rem;
+  font: inherit;
+}
+.status-forms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  margin-bottom: 1.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e3ddd2;
+  border-radius: 6px;
+  background: #fff;
+}
+.status-forms .inline-form { align-items: end; }

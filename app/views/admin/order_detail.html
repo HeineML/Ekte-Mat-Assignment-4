@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from "orders/_status.html" import order_status, payment_status, order_contents %}
+
+{% block title %}Order #{{ order.id }} – Admin – Ekte Mat Online{% endblock %}
+
+{% block content %}
+  <p><a href="{{ url_for('admin_orders.index') }}">← Orders</a></p>
+  <h1>Order #{{ order.id }}</h1>
+
+  <div class="status-forms">
+    <form class="inline-form" method="post" action="{{ url_for('admin_orders.update_status', order_id=order.id) }}">
+      <label>Order status
+        <select name="status">
+          {% for s in statuses %}
+            <option value="{{ s.value }}" {{ 'selected' if s == order.status }}>{{ s.label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <button type="submit">Update</button>
+    </form>
+    <form class="inline-form" method="post" action="{{ url_for('admin_orders.update_payment', order_id=order.id) }}">
+      <label>Payment status
+        <select name="payment_status">
+          {% for s in payment_statuses %}
+            <option value="{{ s.value }}" {{ 'selected' if s == order.payment_status }}>{{ s.label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <button type="submit">Update</button>
+    </form>
+  </div>
+
+  <dl class="details">
+    <dt>Order status</dt><dd>{{ order_status(order.status) }}</dd>
+    <dt>Payment status</dt><dd>{{ payment_status(order.payment_status) }}</dd>
+    <dt>Customer</dt><dd>{{ customer.name ~ ' (' ~ customer.email ~ ')' if customer else 'Unknown' }}</dd>
+    <dt>Submitted</dt><dd>{{ order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at }}</dd>
+    <dt>Event date</dt><dd>{{ order.event_date.isoformat() }}</dd>
+    <dt>Number of guests</dt><dd>{{ order.number_of_guests }}</dd>
+    <dt>Delivery address</dt><dd>{{ order.delivery_address }}</dd>
+  </dl>
+
+  {{ order_contents(order) }}
+{% endblock %}

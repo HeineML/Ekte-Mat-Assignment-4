@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% from "orders/_status.html" import order_status, payment_status %}
+
+{% block title %}Orders – Admin – Ekte Mat Online{% endblock %}
+
+{% block content %}
+  <h1>Orders</h1>
+
+  <form class="filters" method="get" action="{{ url_for('admin_orders.index') }}">
+    <label>Status
+      <select name="status">
+        <option value="">All statuses</option>
+        {% for s in statuses %}
+          <option value="{{ s.value }}" {{ 'selected' if s == status }}>{{ s.label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Event date
+      <input type="date" name="event_date" value="{{ event_date.isoformat() if event_date }}">
+    </label>
+    <button type="submit">Filter</button>
+    {% if status or event_date %}<a href="{{ url_for('admin_orders.index') }}">Clear filters</a>{% endif %}
+  </form>
+
+  {% if orders %}
+    <div class="table-scroll">
+      <table class="cart-table">
+        <thead>
+          <tr><th>Order</th><th>Customer</th><th>Event date</th><th class="num">Guests</th>
+              <th class="num">Total</th><th>Order status</th><th>Payment</th></tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+            <tr>
+              <td><a href="{{ url_for('admin_orders.detail', order_id=order.id) }}">#{{ order.id }}</a></td>
+              <td>{{ customers[order.customer_id].name if customers[order.customer_id] else 'Unknown' }}</td>
+              <td>{{ order.event_date.isoformat() }}</td>
+              <td class="num">{{ order.number_of_guests }}</td>
+              <td class="num">{{ order.total | nok }}</td>
+              <td>{{ order_status(order.status) }}</td>
+              <td>{{ payment_status(order.payment_status) }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>No orders {{ 'match these filters' if status or event_date else 'yet' }}.</p>
+  {% endif %}
+{% endblock %}

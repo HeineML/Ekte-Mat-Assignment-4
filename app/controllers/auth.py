@@ -24,7 +24,7 @@ def _log_in(user):
 
 
 def _home_for(user):
-    return url_for("admin_food.index") if user.is_admin else url_for("menu.index")
+    return url_for("admin_orders.index") if user.is_admin else url_for("menu.index")
 
 
 @bp.route("/register", methods=["GET", "POST"])

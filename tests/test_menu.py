@@ -91,3 +91,9 @@ def test_nok_format():
     assert format_nok(650) == "650 kr"
     assert format_nok(1250) == "1 250 kr"
     assert format_nok(1250000) == "1 250 000 kr"
+
+
+def test_photo_credits_page(client):
+    html = client.get("/photo-credits").get_data(as_text=True)
+    assert "Wikimedia Commons" in html and "CC BY" in html
+    assert 'href="/photo-credits"' in client.get("/").get_data(as_text=True)

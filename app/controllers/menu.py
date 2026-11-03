@@ -1,5 +1,8 @@
-"""Customer menu (C1): published food items grouped by event category."""
-from flask import Blueprint, abort, render_template, request
+"""Customer menu (C1): published food items grouped by event category, and the photo credits."""
+import json
+import os
+
+from flask import Blueprint, abort, current_app, render_template, request
 
 from app.models import get_repos
 from app.models.services import menu_by_event
@@ -28,3 +31,12 @@ def index():
         sections=sections,
         selected_id=selected_id,
     )
+
+
+@bp.route("/photo-credits")
+def photo_credits():
+    """Attribution for the freely licensed seed photos (required by their CC BY / CC BY-SA licences)."""
+    path = os.path.join(current_app.static_folder, "img", "food", "credits.json")
+    with open(path, encoding="utf-8") as f:
+        credits = json.load(f)
+    return render_template("menu/credits.html", credits=credits)

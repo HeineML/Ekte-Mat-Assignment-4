@@ -42,6 +42,9 @@
 
     {% block content %}{% endblock %}
   </main>
+  <footer class="site-footer container">
+    <a href="{{ url_for('menu.photo_credits') }}">Photo credits</a> · All data is synthetic test data.
+  </footer>
   {% block scripts %}{% endblock %}
 </body>
 </html>

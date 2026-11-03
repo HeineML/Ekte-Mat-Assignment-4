@@ -39,7 +39,7 @@ flask --app app seed       # deletes all data and loads synthetic demo data
 flask --app app init-db    # deletes all data and leaves an empty database
 ```
 
-The database is `instance/ektemat.sqlite` and is not committed. All data is synthetic. `seed` creates 11 dishes (one unpublished), 5 orders in different statuses, 2 questions (one answered) and these local demo accounts:
+The database is `instance/ektemat.sqlite` and is not committed. All data is synthetic. `seed` creates 11 dishes with photos (one unpublished), 5 orders in different statuses, 2 questions (one answered) and these local demo accounts:
 
 | Role | Email | Password |
 |---|---|---|
@@ -48,6 +48,8 @@ The database is `instance/ektemat.sqlite` and is not committed. All data is synt
 | Customer | ola@example.test | kunde123 |
 
 Admin accounts only come from the seed data; public registration always creates customers.
+
+The dish photos are freely licensed pictures from Wikimedia Commons, stored in `app/static/img/food/`. `seed` copies them into the upload folder, so admins can replace or remove them, and resetting the data also empties the upload folder. The photographers and licences are listed on the *Photo credits* page (`/photo-credits`, linked in the footer) and in `app/static/img/food/credits.json`.
 
 ## Run
 

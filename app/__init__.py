@@ -21,9 +21,11 @@ def create_app(config_class=Config):
     from app.controllers.menu import bp as menu_bp
     from app.controllers.cart import bp as cart_bp
     from app.controllers.auth import bp as auth_bp
+    from app.controllers.orders import bp as orders_bp
     app.register_blueprint(menu_bp)
     app.register_blueprint(cart_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(orders_bp)
 
     return app
 

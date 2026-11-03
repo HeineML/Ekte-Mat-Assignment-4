@@ -18,6 +18,15 @@ def _save(raw):
     session.modified = True
 
 
+# Used by checkout (orders.py), so that only this module knows the session format.
+def raw_cart():
+    return _load()
+
+
+def clear_cart():
+    session.pop("cart", None)
+
+
 def _published_item_or_404():
     item_id = form_int("food_item_id")
     item = get_repos().food.get(item_id) if item_id is not None else None

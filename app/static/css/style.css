@@ -130,7 +130,15 @@ button {
   font: inherit;
   cursor: pointer;
 }
-button:hover { background: #24492d; }
+a.button {
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+  border-radius: 4px;
+  background: #2f5d3a;
+  color: #fff;
+  text-decoration: none;
+}
+button:hover, a.button:hover { background: #24492d; }
 button.secondary { background: #fff; color: #2f5d3a; }
 button.secondary:hover { background: #e8f0e9; }
 
@@ -201,3 +209,29 @@ input[type="number"] {
   font-weight: normal;
 }
 .form button { align-self: flex-start; }
+
+.form-wide { max-width: none; }
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
+  gap: 0.9rem;
+}
+fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0.75rem 1rem 1rem;
+  border: 1px solid #e3ddd2;
+  border-radius: 6px;
+  background: #fff;
+}
+legend { font-weight: 700; padding: 0 0.3rem; }
+.guest-group {
+  display: grid;
+  grid-template-columns: 2fr 1fr 3fr 3fr;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.guest-group label { font-weight: normal; font-size: 0.85rem; }
+@media (max-width: 640px) {
+  .guest-group { grid-template-columns: 1fr 1fr; padding-bottom: 0.75rem; border-bottom: 1px solid #e3ddd2; }
+}

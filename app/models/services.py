@@ -1,10 +1,11 @@
 """Domain rules that use the repositories. Controllers call these instead of repeating logic."""
 from dataclasses import dataclass, field
+from datetime import date
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.models import get_repos
-from app.models.entities import FoodItem, Role, User
+from app.models.entities import FoodItem, GuestGroup, Order, OrderItem, Role, User
 from app.models.repositories import EmailAlreadyRegistered
 
 MIN_PASSWORD_LENGTH = 8
@@ -114,3 +115,49 @@ def authenticate(email, password):
     if user is None or not check_password_hash(user.password_hash, password):
         return None
     return user
+
+
+# Checkout (C3). The controller parses the form; values it couldn't parse arrive as None.
+
+def place_order(customer_id, cart, event_date, number_of_guests, delivery_address, guest_groups):
+    """Validate the checkout and save the order. Returns (order, []) or (None, [error messages]).
+
+    `cart` comes from build_cart(), so prices are current and only published items are left.
+    Each OrderItem copies the dish's name and price, so later edits don't change the order.
+    If guest_groups is empty, one "All guests" group is stored.
+    """
+    errors = []
+    if not cart.lines:
+        errors.append("Your cart is empty.")
+    for line in cart.lines:
+        if error := check_quantity(line.item, line.quantity):
+            errors.append(error)
+
+    if event_date is None:
+        errors.append("Please enter a valid event date.")
+    elif event_date <= date.today():
+        errors.append("The event date must be after today.")
+    if number_of_guests is None or number_of_guests < 1:
+        errors.append("The number of guests must be at least 1.")
+    delivery_address = delivery_address.strip()
+    if not delivery_address:
+        errors.append("Please enter a delivery address.")
+
+    for number, group in enumerate(guest_groups, start=1):
+        if not group.description or group.size is None or group.size < 1:
+            errors.append(f"Guest group {number} needs a description and a size of at least 1.")
+    sizes = [g.size for g in guest_groups if g.size is not None and g.size > 0]
+    if number_of_guests and sum(sizes) > number_of_guests:
+        errors.append(f"The guest groups add up to {sum(sizes)} people, "
+                      f"which is more than the {number_of_guests} guests.")
+    if errors:
+        return None, errors
+
+    order = Order(
+        customer_id=customer_id, event_date=event_date, number_of_guests=number_of_guests,
+        delivery_address=delivery_address,
+        items=[OrderItem(food_item_id=line.item.id, food_name=line.item.name, quantity=line.quantity,
+                         unit_price_nok=line.item.price_nok) for line in cart.lines],
+        guest_groups=guest_groups or [GuestGroup("All guests", number_of_guests)],
+    )
+    return get_repos().orders.add(order), []

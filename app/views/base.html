@@ -13,6 +13,7 @@
       <a href="{{ url_for('menu.index') }}">Menu</a>
       <a href="{{ url_for('cart.index') }}">Cart ({{ cart_count }})</a>
       {% if g.user %}
+        <a href="{{ url_for('orders.list_orders') }}">My orders</a>
         <span class="nav-user">{{ g.user.name }}</span>
         <form class="nav-form" method="post" action="{{ url_for('auth.logout') }}">
           <button type="submit" class="link-button">Log out</button>

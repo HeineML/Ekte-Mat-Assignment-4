@@ -1,10 +1,11 @@
-"""Customer orders: checkout (C3)."""
+"""Customer orders: checkout (C3) and my orders (C4). Customers only ever see their own orders."""
 from datetime import date, timedelta
 
-from flask import Blueprint, flash, g, redirect, render_template, request, url_for
+from flask import Blueprint, abort, flash, g, redirect, render_template, request, url_for
 
 from app.controllers.cart import clear_cart, raw_cart
 from app.controllers.decorators import login_required
+from app.models import get_repos
 from app.models.entities import GuestGroup
 from app.models.services import build_cart, place_order
 
@@ -68,9 +69,29 @@ def checkout():
         if order:
             clear_cart()
             flash(f"Thank you! Your order #{order.id} has been submitted.", "success")
-            return redirect(url_for("menu.index"))
+            return redirect(url_for("orders.detail", order_id=order.id))
         for error in errors:
             flash(error, "error")
 
     return render_template("orders/checkout.html", cart=cart, form=request.form, rows=rows,
                            min_date=date.today() + timedelta(days=1))
+
+
+def own_order_or_404(order_id):
+    """The logged-in customer's order. Other customers' orders give 404, so their ids stay hidden."""
+    order = get_repos().orders.get_for_customer(order_id, g.user.id)
+    if order is None:
+        abort(404)
+    return order
+
+
+@bp.route("/orders")
+@login_required
+def list_orders():
+    return render_template("orders/list.html", orders=get_repos().orders.list_for_customer(g.user.id))
+
+
+@bp.route("/orders/<int:order_id>")
+@login_required
+def detail(order_id):
+    return render_template("orders/detail.html", order=own_order_or_404(order_id))

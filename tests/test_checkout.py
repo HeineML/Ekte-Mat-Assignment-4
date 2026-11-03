@@ -78,6 +78,7 @@ def test_valid_checkout_saves_order(client, customer, repos, menu):
     assert [(g.description, g.size, g.allergy_notes, g.dietary_notes) for g in order.guest_groups] == [
         ("Adults", 25, "", ""), ("Children", 5, "Milk", "Halal")]
     assert cart_in_session(client) is None
+    assert response.headers["Location"] == f"/orders/{order.id}"
 
 
 def test_checkout_without_groups_stores_all_guests(client, customer, repos):

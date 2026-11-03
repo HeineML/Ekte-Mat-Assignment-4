@@ -235,3 +235,28 @@ legend { font-weight: 700; padding: 0 0.3rem; }
 @media (max-width: 640px) {
   .guest-group { grid-template-columns: 1fr 1fr; padding-bottom: 0.75rem; border-bottom: 1px solid #e3ddd2; }
 }
+
+/* Order and payment status badges */
+.status {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  background: #eee;
+  color: #333;
+}
+.status-submitted, .status-invoiced { background: #fdf3d8; color: #6b5200; }
+.status-approved, .status-in_preparation, .status-deposit_paid { background: #dfeaf7; color: #1d4370; }
+.status-delivered, .status-paid { background: #e8f0e9; color: #2f5d3a; }
+.status-rejected, .status-cancelled, .status-not_paid { background: #f8e1e1; color: #7a2323; }
+
+/* Order details */
+.details {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.35rem 1rem;
+  margin: 0 0 1.5rem;
+}
+.details dt { font-weight: 600; }
+.details dd { margin: 0; white-space: pre-line; }

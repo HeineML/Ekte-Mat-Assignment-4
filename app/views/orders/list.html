@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "orders/_status.html" import order_status, payment_status %}
+
+{% block title %}My orders – Ekte Mat Online{% endblock %}
+
+{% block content %}
+  <h1>My orders</h1>
+  {% if orders %}
+    <div class="table-scroll">
+      <table class="cart-table">
+        <thead>
+          <tr><th>Order</th><th>Event date</th><th class="num">Guests</th><th class="num">Total</th>
+              <th>Order status</th><th>Payment</th></tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+            <tr>
+              <td><a href="{{ url_for('orders.detail', order_id=order.id) }}">#{{ order.id }}</a></td>
+              <td>{{ order.event_date.isoformat() }}</td>
+              <td class="num">{{ order.number_of_guests }}</td>
+              <td class="num">{{ order.total | nok }}</td>
+              <td>{{ order_status(order.status) }}</td>
+              <td>{{ payment_status(order.payment_status) }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>You haven't placed any orders yet.</p>
+    <p><a href="{{ url_for('menu.index') }}">Browse the menu</a></p>
+  {% endif %}
+{% endblock %}

@@ -1,8 +1,13 @@
 """Domain rules that use the repositories. Controllers call these instead of repeating logic."""
 from dataclasses import dataclass, field
 
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from app.models import get_repos
-from app.models.entities import FoodItem
+from app.models.entities import FoodItem, Role, User
+from app.models.repositories import EmailAlreadyRegistered
+
+MIN_PASSWORD_LENGTH = 8
 
 
 def menu_by_event(category_id=None):
@@ -74,3 +79,38 @@ def build_cart(raw):
             continue
         cart.lines.append(CartLine(item, quantity))
     return cart
+
+
+# Register and login (C3, §8). Passwords are only ever stored as werkzeug hashes.
+
+def register_customer(name, email, password, password2):
+    """Create a customer account. Returns (user, []) on success or (None, [error messages]).
+
+    Public registration always creates customers; admin accounts come from the seed data.
+    """
+    name, email = name.strip(), email.strip().lower()
+    errors = []
+    if not name:
+        errors.append("Please enter your name.")
+    if "@" not in email:
+        errors.append("Please enter a valid email address.")
+    if len(password) < MIN_PASSWORD_LENGTH:
+        errors.append(f"The password must be at least {MIN_PASSWORD_LENGTH} characters.")
+    elif password != password2:
+        errors.append("The passwords don't match.")
+    if errors:
+        return None, errors
+
+    user = User(name=name, email=email, password_hash=generate_password_hash(password), role=Role.CUSTOMER)
+    try:
+        return get_repos().users.add(user), []
+    except EmailAlreadyRegistered:
+        return None, ["An account with this email already exists."]
+
+
+def authenticate(email, password):
+    """Return the user if the email and password match, otherwise None."""
+    user = get_repos().users.get_by_email(email.strip())
+    if user is None or not check_password_hash(user.password_hash, password):
+        return None
+    return user

@@ -1,6 +1,7 @@
 """Shopping cart (C2). The cart lives in the session as {food_item_id: quantity} until checkout."""
 from flask import Blueprint, abort, flash, redirect, render_template, request, session, url_for
 
+from app.controllers.helpers import form_int, safe_next
 from app.models import get_repos
 from app.models.services import build_cart, check_quantity
 
@@ -17,15 +18,8 @@ def _save(raw):
     session.modified = True
 
 
-def _form_int(name):
-    try:
-        return int(request.form[name])
-    except (KeyError, ValueError):
-        return None
-
-
 def _published_item_or_404():
-    item_id = _form_int("food_item_id")
+    item_id = form_int("food_item_id")
     item = get_repos().food.get(item_id) if item_id is not None else None
     if item is None or not item.published:
         abort(404)
@@ -33,11 +27,7 @@ def _published_item_or_404():
 
 
 def _safe_next():
-    """Only redirect to local paths, never to another site."""
-    target = request.form.get("next", "")
-    if target.startswith("/") and not target.startswith("//"):
-        return target
-    return url_for("menu.index")
+    return safe_next(request.form.get("next", ""), url_for("menu.index"))
 
 
 @bp.app_context_processor
@@ -59,7 +49,7 @@ def index():
 @bp.post("/add")
 def add():
     item = _published_item_or_404()
-    quantity = _form_int("quantity")
+    quantity = form_int("quantity")
     if quantity is None or quantity < 1:
         flash("Please enter a quantity of at least 1.", "error")
         return redirect(_safe_next())
@@ -79,12 +69,12 @@ def add():
 @bp.post("/update")
 def update():
     raw = _load()
-    item_id = _form_int("food_item_id")
+    item_id = form_int("food_item_id")
     if item_id not in raw:
         abort(404)
     item = _published_item_or_404()
 
-    quantity = _form_int("quantity")
+    quantity = form_int("quantity")
     if quantity is None or quantity < 1:
         flash("Please enter a whole number. Use Remove to take an item out of the cart.", "error")
     elif error := check_quantity(item, quantity):
@@ -99,7 +89,7 @@ def update():
 @bp.post("/remove")
 def remove():
     raw = _load()
-    item_id = _form_int("food_item_id")
+    item_id = form_int("food_item_id")
     if raw.pop(item_id, None) is not None:
         _save(raw)
         flash("Item removed from your cart.", "success")

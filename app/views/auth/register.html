@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Register – Ekte Mat Online{% endblock %}
+
+{% block content %}
+  <h1>Register</h1>
+  <form class="form" method="post" action="{{ url_for('auth.register') }}">
+    <input type="hidden" name="next" value="{{ next_url }}">
+    <label>Name
+      <input type="text" name="name" value="{{ form.get('name', '') }}" autocomplete="name" required autofocus>
+    </label>
+    <label>Email
+      <input type="email" name="email" value="{{ form.get('email', '') }}" autocomplete="email" required>
+    </label>
+    <label>Password (at least 8 characters)
+      <input type="password" name="password" autocomplete="new-password" minlength="8" required>
+    </label>
+    <label>Repeat password
+      <input type="password" name="password2" autocomplete="new-password" required>
+    </label>
+    <button type="submit">Create account</button>
+  </form>
+  <p>Already have an account? <a href="{{ url_for('auth.login', next=next_url or None) }}">Log in</a></p>
+{% endblock %}

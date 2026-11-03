@@ -30,7 +30,7 @@ Tests build the app with `create_app(TestConfig)` and a fresh SQLite file under 
 
 MVC under `app/`:
 - **Model, `app/models/`:** dataclass entities and status enums (`entities.py`), abstract repository interfaces (`repositories.py`), the storage-independent `init-db`/`seed` CLI commands (`seed.py`), and the SQLite implementation in `app/models/sqlite/` (`db.py` keeps one connection per request in `flask.g`; `schema.sql`; `repositories.py`). `init_storage(app)` in `app/models/__init__.py` picks the backend from `config.STORAGE`. Domain rules that combine repository calls go in `services.py` (e.g. `menu_by_event()`); controllers call these instead of repeating logic.
-- **Controller, `app/controllers/`:** one Flask blueprint per area (auth, menu, cart, orders, admin_food, admin_orders, admin_questions), plus `login_required` and `admin_required` in `decorators.py`.
+- **Controller, `app/controllers/`:** one Flask blueprint per area (auth, menu, cart, orders, admin_food, admin_orders, admin_questions), plus `login_required` and `admin_required` in `decorators.py` and `safe_next()`/`form_int()` in `helpers.py`. `auth.py` loads the logged-in user into `g.user` (or `None`) before every request from `session["user_id"]`; templates use `g.user` too.
 - **View, `app/views/`:** Jinja2 templates. Flask is configured with `template_folder="views"`. CSS, JavaScript and images are in `app/static/`, and uploaded images go to `app/static/uploads/` (gitignored). Reuse the `food_card(item)` macro (`views/menu/_food_card.html`, accepts a `{% call %}` block for extra buttons) and the `nok` filter (`{{ price | nok }}` → "1 250 kr", defined in `app/__init__.py`).
 
 Storage must stay replaceable by Neo4j:

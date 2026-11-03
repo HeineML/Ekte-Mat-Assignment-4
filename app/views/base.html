@@ -12,6 +12,15 @@
     <nav>
       <a href="{{ url_for('menu.index') }}">Menu</a>
       <a href="{{ url_for('cart.index') }}">Cart ({{ cart_count }})</a>
+      {% if g.user %}
+        <span class="nav-user">{{ g.user.name }}</span>
+        <form class="nav-form" method="post" action="{{ url_for('auth.logout') }}">
+          <button type="submit" class="link-button">Log out</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}">Log in</a>
+        <a href="{{ url_for('auth.register') }}">Register</a>
+      {% endif %}
     </nav>
   </header>
 

@@ -19,7 +19,16 @@ body {
 
 .site-header a { color: #fff; text-decoration: none; }
 .site-header .brand { font-weight: 700; font-size: 1.2rem; }
-.site-header nav { display: flex; gap: 1rem; }
+.site-header nav { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+.site-header .nav-user { color: #d7e6da; }
+.nav-form { margin: 0; }
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #fff;
+}
+.link-button:hover { background: none; text-decoration: underline; }
 
 .container {
   max-width: 960px;
@@ -167,3 +176,28 @@ input[type="number"] {
   gap: 0.4rem;
   align-items: center;
 }
+
+/* Forms */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  max-width: 28rem;
+}
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-weight: 600;
+}
+.form input:not([type="checkbox"]):not([type="radio"]),
+.form textarea,
+.form select {
+  width: 100%;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid #c9c2b5;
+  border-radius: 4px;
+  font: inherit;
+  font-weight: normal;
+}
+.form button { align-self: flex-start; }

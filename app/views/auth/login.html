@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Log in – Ekte Mat Online{% endblock %}
+
+{% block content %}
+  <h1>Log in</h1>
+  <form class="form" method="post" action="{{ url_for('auth.login') }}">
+    <input type="hidden" name="next" value="{{ next_url }}">
+    <label>Email
+      <input type="email" name="email" value="{{ form.get('email', '') }}" autocomplete="email" required autofocus>
+    </label>
+    <label>Password
+      <input type="password" name="password" autocomplete="current-password" required>
+    </label>
+    <button type="submit">Log in</button>
+  </form>
+  <p>No account yet? <a href="{{ url_for('auth.register', next=next_url or None) }}">Register</a></p>
+{% endblock %}

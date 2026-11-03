@@ -12,7 +12,25 @@
     <nav>
       <a href="{{ url_for('menu.index') }}">Menu</a>
       <a href="{{ url_for('cart.index') }}">Cart ({{ cart_count }})</a>
+      {% if g.user %}
+        <a href="{{ url_for('orders.list_orders') }}">My orders</a>
+        <span class="nav-user">{{ g.user.name }}</span>
+        <form class="nav-form" method="post" action="{{ url_for('auth.logout') }}">
+          <button type="submit" class="link-button">Log out</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}">Log in</a>
+        <a href="{{ url_for('auth.register') }}">Register</a>
+      {% endif %}
     </nav>
+    {% if g.user and g.user.is_admin %}
+      <nav class="admin-nav" aria-label="Admin">
+        <span>Admin:</span>
+        <a href="{{ url_for('admin_orders.index') }}">Orders</a>
+        <a href="{{ url_for('admin_food.index') }}">Food</a>
+        <a href="{{ url_for('admin_questions.index') }}">Questions</a>
+      </nav>
+    {% endif %}
   </header>
 
   <main class="container">
@@ -24,5 +42,9 @@
 
     {% block content %}{% endblock %}
   </main>
+  <footer class="site-footer container">
+    <a href="{{ url_for('menu.photo_credits') }}">Photo credits</a> · All data is synthetic test data.
+  </footer>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

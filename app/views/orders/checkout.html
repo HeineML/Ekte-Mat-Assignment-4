@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout – Ekte Mat Online{% endblock %}
+
+{% block content %}
+  <h1>Checkout</h1>
+
+  <h2>Your order</h2>
+  <div class="table-scroll">
+    <table class="cart-table">
+      <thead><tr><th>Dish</th><th class="num">Quantity</th><th class="num">Price</th><th class="num">Total</th></tr></thead>
+      <tbody>
+        {% for line in cart.lines %}
+          <tr>
+            <td>{{ line.item.name }}</td>
+            <td class="num">{{ line.quantity }}</td>
+            <td class="num">{{ line.item.price_nok | nok }}</td>
+            <td class="num">{{ line.line_total | nok }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot><tr><th colspan="3">Estimated total</th><th class="num">{{ cart.total | nok }}</th></tr></tfoot>
+    </table>
+  </div>
+  <p class="muted"><a href="{{ url_for('cart.index') }}">Change the cart</a>. No payment is taken online; you'll be invoiced.</p>
+
+  <h2>Event details</h2>
+  <form class="form form-wide" method="post" action="{{ url_for('orders.checkout') }}">
+    <div class="form-row">
+      <label>Event date
+        <input type="date" name="event_date" value="{{ form.get('event_date', '') }}" min="{{ min_date.isoformat() }}" required>
+      </label>
+      <label>Number of guests
+        <input type="number" name="number_of_guests" min="1" value="{{ form.get('number_of_guests', '') }}" required>
+      </label>
+    </div>
+    <label>Delivery address
+      <textarea name="delivery_address" rows="2" required>{{ form.get('delivery_address', '') }}</textarea>
+    </label>
+
+    <fieldset>
+      <legend>Guest groups</legend>
+      <p class="muted small">Describe groups of guests with the same allergies or diet, for example
+        "Children, 8, milk allergy". Leave rows empty if you don't need them; with no groups, the order
+        is for all guests with no special notes.</p>
+      {% for row in rows %}
+        <div class="guest-group">
+          <label>Group
+            <input type="text" name="group_description" value="{{ row.description }}" placeholder="e.g. Children">
+          </label>
+          <label>Size
+            <input type="number" name="group_size" min="1" value="{{ row.size }}">
+          </label>
+          <label>Allergy notes
+            <input type="text" name="group_allergy_notes" value="{{ row.allergy_notes }}">
+          </label>
+          <label>Dietary notes
+            <input type="text" name="group_dietary_notes" value="{{ row.dietary_notes }}">
+          </label>
+        </div>
+      {% endfor %}
+    </fieldset>
+
+    <button type="submit">Submit order</button>
+  </form>
+{% endblock %}

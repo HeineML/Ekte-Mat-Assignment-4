@@ -1,7 +1,9 @@
 """CLI commands `init-db` and `seed`. They only use the repository interface, so they work for any backend.
 
-All data here is synthetic. The demo passwords are for local test accounts only.
+All data here is synthetic. The demo passwords are for local test accounts only. The food photos
+in app/static/img/food/ are freely licensed from Wikimedia Commons; see credits.json there.
 """
+import os
 from datetime import date, timedelta
 
 import click
@@ -46,9 +48,36 @@ FOOD_ITEMS = [
 ]
 
 
+# Food item name -> photo in app/static/img/food/. Seeding copies it into the upload folder, so
+# admins can replace or remove it like any uploaded picture.
+PHOTOS = {
+    "Open sandwiches": "open-sandwiches.jpg",
+    "Cream cake": "cream-cake.jpg",
+    "Roast beef with potato salad": "roast-beef.jpg",
+    "Baked salmon with dill sauce": "salmon.jpg",
+    "Lentil curry": "lentil-curry.jpg",
+    "Shrimp sandwich": "shrimp-sandwich.jpg",
+    "Pork rib with sauerkraut": "pork-rib.jpg",
+    "Pinnekjøtt": "pinnekjott.jpg",
+    "Rice cream with red sauce": "rice-cream.jpg",
+    "Fruit platter": "fruit-platter.jpg",
+    "Sushi platter": "sushi.jpg",
+}
+
+
 def reset_storage():
-    from app.models import get_repos
+    from app.models import get_repos, images
     get_repos().reset()
+    images.delete_all()
+
+
+def _seed_photo(name):
+    from flask import current_app
+    from app.models import images
+    filename = PHOTOS.get(name)
+    if filename is None:
+        return None
+    return images.store_copy(os.path.join(current_app.static_folder, "img", "food", filename))
 
 
 def seed_data():
@@ -67,7 +96,7 @@ def seed_data():
     for name, description, price, minimum, published, allergens, labels, cats in FOOD_ITEMS:
         food[name] = repos.food.add(FoodItem(
             name=name, description=description, price_nok=price, minimum_quantity=minimum,
-            published=published, allergens=allergens, dietary_labels=labels,
+            published=published, image=_seed_photo(name), allergens=allergens, dietary_labels=labels,
             event_categories=[categories[c] for c in cats],
         ))
 
@@ -106,6 +135,29 @@ def seed_data():
         status=OrderStatus.IN_PREPARATION, payment_status=PaymentStatus.INVOICED,
     ))
 
+    repos.orders.add(Order(
+        customer_id=ola.id, event_date=today - timedelta(days=14), number_of_guests=12,
+        delivery_address="Eksempelgata 12, 5003 Bergen",
+        items=[line("Baked salmon with dill sauce", 12), line("Fruit platter", 12)],
+        guest_groups=[GuestGroup("Colleagues", 12, allergy_notes="One guest is allergic to fish; "
+                                 "the kitchen made one portion without salmon.")],
+        status=OrderStatus.DELIVERED, payment_status=PaymentStatus.PAID,
+    ))
+    repos.orders.add(Order(
+        customer_id=kari.id, event_date=today + timedelta(days=90), number_of_guests=60,
+        delivery_address="Testveien 1, 5000 Bergen",
+        items=[line("Shrimp sandwich", 60), line("Cream cake", 5)],
+        guest_groups=[GuestGroup("Wedding guests", 60)],
+        status=OrderStatus.CANCELLED,
+    ))
+    repos.orders.add(Order(
+        customer_id=ola.id, event_date=today + timedelta(days=2), number_of_guests=150,
+        delivery_address="Eksempelgata 12, 5003 Bergen",
+        items=[line("Open sandwiches", 300)],
+        guest_groups=[GuestGroup("Conference guests", 150)],
+        status=OrderStatus.REJECTED,
+    ))
+
     answered = repos.questions.add(Question(
         order_id=confirmation.id, customer_id=kari.id,
         question="Can the children's portions be marked so we know which ones are milk-free?",
@@ -117,7 +169,7 @@ def seed_data():
     ))
 
     return {"users": len(users), "categories": len(categories), "food items": len(food),
-            "orders": 3, "questions": 2}
+            "orders": 6, "questions": 2}
 
 
 def register_commands(app):

@@ -1,0 +1,79 @@
+{
+  "cream-cake": {
+    "title": "Bløtkake.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Bl%C3%B8tkake.jpg",
+    "artist": "thefuturistics",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "fruit-platter": {
+    "title": "Fruit platter with grapes.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Fruit_platter_with_grapes.jpg",
+    "artist": "Jane Cooper",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0"
+  },
+  "lentil-curry": {
+    "title": "Tadka Daal (Indian lentil curry).jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Tadka_Daal_(Indian_lentil_curry).jpg",
+    "artist": "rovingI",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "open-sandwiches": {
+    "title": "Norwegian.food-Smørbrød-01.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Norwegian.food-Sm%C3%B8rbr%C3%B8d-01.jpg",
+    "artist": "Seansie",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "pinnekjott": {
+    "title": "Pinnekjøtt med kålrabistappe, 2012.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Pinnekj%C3%B8tt_med_k%C3%A5lrabistappe,_2012.jpg",
+    "artist": "Bernt Rostad",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "pork-rib": {
+    "title": "Prok ribs.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Prok_ribs.jpg",
+    "artist": "Røed",
+    "license": "CC BY-SA 2.5",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.5"
+  },
+  "rice-cream": {
+    "title": "Risalamande, a Danish Christmas dessert.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Risalamande,_a_Danish_Christmas_dessert.jpg",
+    "artist": "Lorie Shaull",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  "roast-beef": {
+    "title": "Roast beef dish.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Roast_beef_dish.jpg",
+    "artist": "Akahito Yamabe",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+  },
+  "salmon": {
+    "title": "Baked salmon with dill and lemon.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Baked_salmon_with_dill_and_lemon.jpg",
+    "artist": "MOs810",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  "shrimp-sandwich": {
+    "title": "Open Faced Shrimp Sandwich.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Open_Faced_Shrimp_Sandwich.jpg",
+    "artist": "Mike Rosenberg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "sushi": {
+    "title": "Sushi platter.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Sushi_platter.jpg",
+    "artist": "chidorian from Japan",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0"
+  }
+}

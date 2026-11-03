@@ -1,4 +1,7 @@
+import os
+
 from app.models import get_repos
+from app.models.entities import OrderStatus
 from app.models.seed import DEMO_ACCOUNTS
 
 
@@ -16,9 +19,18 @@ def test_seed_command_loads_synthetic_data(app):
 
         assert len(repos.food.list_categories()) == 5
         assert len(repos.food.list_published()) < len(repos.food.list_all())
-        assert len(repos.orders.list_all()) == 3
+        assert len(repos.orders.list_all()) == 6
+        assert {o.status for o in repos.orders.list_all()} == set(OrderStatus)
         assert len(repos.questions.list_all()) == 2
         assert len(repos.questions.list_all(unanswered_only=True)) == 1
+
+
+def test_seed_gives_food_items_photos(app):
+    assert app.test_cli_runner().invoke(args=["seed"]).exit_code == 0
+    with app.app_context():
+        items = get_repos().food.list_all()
+        assert all(item.image for item in items)
+        assert sorted(os.listdir(app.config["UPLOAD_FOLDER"])) == sorted(item.image for item in items)
 
 
 def test_seed_can_run_twice(app):
@@ -26,7 +38,8 @@ def test_seed_can_run_twice(app):
     assert runner.invoke(args=["seed"]).exit_code == 0
     assert runner.invoke(args=["seed"]).exit_code == 0
     with app.app_context():
-        assert len(get_repos().orders.list_all()) == 3
+        assert len(get_repos().orders.list_all()) == 6
+    assert len(os.listdir(app.config["UPLOAD_FOLDER"])) == 11  # the first run's photos were removed
 
 
 def test_init_db_empties_storage(app):

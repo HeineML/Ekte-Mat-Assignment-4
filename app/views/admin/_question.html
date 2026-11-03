@@ -1,0 +1,23 @@
+{# One customer question with its answer form. Used by admin/questions.html and admin/order_detail.html. #}
+{% macro admin_question(question, customer=None, show_order=True) %}
+  <article class="question">
+    <p class="muted small">
+      {% if show_order %}
+        Order <a href="{{ url_for('admin_orders.detail', order_id=question.order_id) }}">#{{ question.order_id }}</a> ·
+      {% endif %}
+      {% if customer %}{{ customer.name }} · {% endif %}
+      asked {{ question.created_at.strftime('%Y-%m-%d %H:%M') if question.created_at }}
+      {% if not question.is_answered %}<span class="status status-submitted">Unanswered</span>{% endif %}
+    </p>
+    <p class="question-text">{{ question.question }}</p>
+    <form class="form form-wide" method="post"
+          action="{{ url_for('admin_questions.answer', question_id=question.id) }}">
+      <input type="hidden" name="next" value="{{ request.full_path.rstrip('?') }}">
+      <label>{{ 'Answer' if question.is_answered else 'Write an answer' }}
+        {% if question.answered_at %}<span class="hint">answered {{ question.answered_at.strftime('%Y-%m-%d %H:%M') }}</span>{% endif %}
+        <textarea name="answer" rows="2" required>{{ question.answer or '' }}</textarea>
+      </label>
+      <button type="submit">{{ 'Update answer' if question.is_answered else 'Send answer' }}</button>
+    </form>
+  </article>
+{% endmacro %}

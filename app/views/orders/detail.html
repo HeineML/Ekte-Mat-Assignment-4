@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "orders/_status.html" import order_status, payment_status, order_contents %}
+
+{% block title %}Order #{{ order.id }} – Ekte Mat Online{% endblock %}
+
+{% block content %}
+  <p><a href="{{ url_for('orders.list_orders') }}">← My orders</a></p>
+  <h1>Order #{{ order.id }}</h1>
+
+  <dl class="details">
+    <dt>Order status</dt><dd>{{ order_status(order.status) }}</dd>
+    <dt>Payment status</dt><dd>{{ payment_status(order.payment_status) }}</dd>
+    <dt>Submitted</dt><dd>{{ order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at }}</dd>
+    <dt>Event date</dt><dd>{{ order.event_date.isoformat() }}</dd>
+    <dt>Number of guests</dt><dd>{{ order.number_of_guests }}</dd>
+    <dt>Delivery address</dt><dd>{{ order.delivery_address }}</dd>
+  </dl>
+
+  {{ order_contents(order) }}
+
+  <h2 id="questions">Questions</h2>
+  {% for question in questions %}
+    <article class="question">
+      <p class="muted small">You asked {{ question.created_at.strftime('%Y-%m-%d %H:%M') if question.created_at }}</p>
+      <p class="question-text">{{ question.question }}</p>
+      {% if question.is_answered %}
+        <div class="answer">
+          <p class="muted small">Answer from Ekte Mat{{ ', ' ~ question.answered_at.strftime('%Y-%m-%d %H:%M') if question.answered_at }}</p>
+          <p class="question-text">{{ question.answer }}</p>
+        </div>
+      {% else %}
+        <p><span class="status status-submitted">Waiting for an answer</span></p>
+      {% endif %}
+    </article>
+  {% else %}
+    <p class="muted">No questions about this order yet.</p>
+  {% endfor %}
+
+  <form class="form form-wide" method="post" action="{{ url_for('orders.ask', order_id=order.id) }}">
+    <label>Ask a question about this order
+      <textarea name="question" rows="3" maxlength="2000" required></textarea>
+    </label>
+    <button type="submit">Send question</button>
+  </form>
+{% endblock %}

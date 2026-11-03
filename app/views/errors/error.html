@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}{{ code }} – Ekte Mat Online{% endblock %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  <p>{{ message }}</p>
+  <p><a href="{{ url_for('menu.index') }}">Back to the menu</a></p>
+{% endblock %}

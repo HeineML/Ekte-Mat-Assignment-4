@@ -1,4 +1,4 @@
-"""Checks that keep the storage replaceable by Neo4j (CLAUDE.md, docs/plans/00-architecture.md §3)."""
+"""Checks that keep the storage replaceable by Neo4j (see CLAUDE.md)."""
 from pathlib import Path
 
 import pytest

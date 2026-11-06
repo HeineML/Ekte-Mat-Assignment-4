@@ -1,6 +1,6 @@
 # Ekte Mat Online – Report material (INFO212 Oblig 4)
 
-Content for the final report (`docs/requirements.md` §11). Screenshots are in [`docs/screenshots/`](screenshots/),
+Content for the final report. Screenshots are in [`docs/screenshots/`](screenshots/),
 taken from the seeded demo data.
 
 ---
@@ -11,7 +11,7 @@ taken from the seeded demo data.
 |---|---|
 | Course | INFO212, Obligatory Assignment 4 |
 | Project | Ekte Mat Online |
-| Group members | Heine Moe Larsen, *(add the other group members)* |
+| Group members | Heine Moe Larsen, Nicolai Holth, Torfinn Sønsteby, Tobias Bjørneby |
 | GitHub repository | https://github.com/HeineML/Ekte-Mat-Assignment-4 |
 | Assessed version | tag **`v1.0`** |
 | Neo4j used? | **No.** SQLite behind repository interfaces, so Neo4j can replace it later. |
@@ -20,7 +20,7 @@ taken from the seeded demo data.
 
 ## 2. Features
 
-All mandatory functionality (§6) is implemented; optional extensions (§7) were not.
+All mandatory functionality is implemented; optional extensions were not.
 
 ### Customer
 
@@ -101,20 +101,18 @@ Payment status: `not_paid` → `deposit_paid` → `invoiced` → `paid`. Both ar
 | SQLite behind repository interfaces | Keeps Neo4j possible later. |
 | Service layer for domain rules | Thin controllers; rules tested without HTTP. |
 | Cart in the session | Customers can fill a cart before logging in. |
-| 404 for other customers' orders | Customers only see their own data (§8). |
-| Admins only from seed data | Registration can never create an admin (§8). |
+| 404 for other customers' orders | Customers only see their own data. |
+| Admins only from seed data | Registration can never create an admin. |
 | Upload instead of AI images | Allowed by A2; no API keys needed. |
 
 **Testing:** 162 pytest tests cover the repositories, every feature, access control and validation.
 
 ---
 
-## 4. Reflection (draft – the group should edit this into its own words)
+## 4. Reflection
 
-Working from a written design helped both the product and how we steered Claude Code. With
-`docs/requirements.md` as the source of truth and the architecture rules in `CLAUDE.md`, the generated code
-stayed consistent: each feature reused the same services, decorators and templates. A plan per phase in
-`docs/plans/` linked each requirement to code, commits and tests. Phases 0–4 were agreed before
-implementation; phases 5–12 were implemented by Claude Code in one session and reviewed by the group
-afterwards. That was faster, but small design decisions were made by the tool first and checked later,
-which gave us less control.
+Our prior knowledge of software design helped us organize the main functionality of the application and gave
+us a clear overview of how the system should work. It also guided us when using Claude Code: with the
+requirements and architecture rules written down, the generated code stayed consistent across features.
+Phases 0–4 were agreed before implementation, while phases 5–12 were implemented first and reviewed by the
+group afterwards. That was faster, but gave us less control over small design decisions.

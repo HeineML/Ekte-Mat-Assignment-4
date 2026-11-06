@@ -6,9 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Ekte Mat Online is INFO212 Obligatory Assignment 4: a first version of an online catering and ordering system built with Flask using MVC. Customers browse a menu grouped by event, fill a cart, register or log in, submit orders, follow order and payment status, and ask questions. Admins manage food items and images, orders and questions.
 
-- `docs/requirements.md` is the source of truth. Do not invent requirements. When it leaves something open, point that out and ask instead of deciding silently.
-- The group did **not** complete Lab 7. `docs/requirements.md` is reconstructed from the assignment text and the Lab 7 instructions. Never describe any material as work done in Lab 7.
-- Architecture, domain model, routes and the phase roadmap are in `docs/plans/00-architecture.md`.
+- The assignment text is the source of truth (requirement IDs C1–C5 for customers, A1–A4 for admins). Do not invent requirements. When it leaves something open, point that out and ask instead of deciding silently.
+- The group did **not** complete Lab 7. Never describe any material as work done in Lab 7.
+- Architecture, domain model and design decisions are summarised in `docs/report.md`.
 
 ## Commands
 
@@ -52,10 +52,9 @@ The shopping cart is kept in the Flask session as `session["cart"] = {"<food_ite
 
 ## Workflow
 
-- Work in the small phases listed in `docs/plans/00-architecture.md`, one phase at a time and in that order.
-- Before a larger feature: use Plan mode, have the group agree on the plan, and save it as `docs/plans/NN-name.md` (goal, requirement IDs, files, steps, verification, status). Then implement it.
+- Before a larger feature: use Plan mode and have the group agree on the plan before implementing it.
 - Reference requirement IDs (C1–C5, A1–A4) in plans and commit messages to keep requirements traceable.
-- Status (2026-11-03): phases 0–12 are done and agreed by the group, and the assessed version is tagged `v1.0`; phase 13 (optional extensions) was skipped by the group's decision. `docs/plans/12-hardening.md` has the requirement traceability table and `docs/report.md` the report material.
+- Status (2026-11-03): phases 0–12 are done and agreed by the group, and the assessed version is tagged `v1.0`; phase 13 (optional extensions) was skipped by the group's decision. `docs/report.md` has the report material. The phase plans and `docs/requirements.md` were removed by the group's decision (2026-11-06); they remain in git history and in the `v1.0` tag.
 
 ## Security and data
 

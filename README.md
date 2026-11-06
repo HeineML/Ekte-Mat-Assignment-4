@@ -2,7 +2,7 @@
 
 INFO212 Obligatory Assignment 4: a first version of an online catering and ordering system, built with Flask using MVC.
 
-The requirements are in [docs/requirements.md](docs/requirements.md). The architecture and the plan for each phase are in [docs/plans/](docs/plans/); [12-hardening.md](docs/plans/12-hardening.md) maps every requirement to its routes and tests. Report material (features with screenshots, diagrams, design and reflection) is in [docs/report.md](docs/report.md).
+Report material (features with screenshots, diagrams, design and reflection) is in [docs/report.md](docs/report.md).
 
 Assessed version: tag `v1.0`.
 

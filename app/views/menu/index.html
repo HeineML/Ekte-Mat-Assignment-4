@@ -7,12 +7,51 @@
   <h1>Menu</h1>
 
   <nav class="tabs" aria-label="Event categories">
-    <a href="{{ url_for('menu.index') }}" class="{{ 'active' if selected_id is none }}">All events</a>
+    <a href="{{ url_for('menu.index', without=without, diet=diet) }}"
+       class="{{ 'active' if selected_id is none }}">All events</a>
     {% for category in categories %}
-      <a href="{{ url_for('menu.index', event=category.id) }}"
+      <a href="{{ url_for('menu.index', event=category.id, without=without, diet=diet) }}"
          class="{{ 'active' if category.id == selected_id }}">{{ category.name }}</a>
     {% endfor %}
   </nav>
+
+  {% if allergens or labels %}
+    <form class="menu-filter" method="get" action="{{ url_for('menu.index') }}">
+      {% if selected_id is not none %}<input type="hidden" name="event" value="{{ selected_id }}">{% endif %}
+      {% if allergens %}
+        <fieldset>
+          <legend>Without allergens</legend>
+          <div class="checkboxes">
+            {% for allergen in allergens %}
+              <label class="checkbox">
+                <input type="checkbox" name="without" value="{{ allergen }}" {{ 'checked' if allergen in without }}>
+                {{ allergen }}
+              </label>
+            {% endfor %}
+          </div>
+        </fieldset>
+      {% endif %}
+      {% if labels %}
+        <fieldset>
+          <legend>Dietary labels</legend>
+          <div class="checkboxes">
+            {% for label in labels %}
+              <label class="checkbox">
+                <input type="checkbox" name="diet" value="{{ label }}" {{ 'checked' if label in diet }}>
+                {{ label }}
+              </label>
+            {% endfor %}
+          </div>
+        </fieldset>
+      {% endif %}
+      <div class="actions">
+        <button type="submit">Filter</button>
+        {% if without or diet %}
+          <a href="{{ url_for('menu.index', event=selected_id) }}">Clear filters</a>
+        {% endif %}
+      </div>
+    </form>
+  {% endif %}
 
   {% for category, items in sections %}
     <section class="menu-section">
@@ -33,6 +72,10 @@
       </div>
     </section>
   {% else %}
-    <p class="muted">There are no dishes on the menu {{ 'for this event ' if selected_id is not none }}yet.</p>
+    {% if without or diet %}
+      <p class="muted">No dishes {{ 'for this event ' if selected_id is not none }}match the filter.</p>
+    {% else %}
+      <p class="muted">There are no dishes on the menu {{ 'for this event ' if selected_id is not none }}yet.</p>
+    {% endif %}
   {% endfor %}
 {% endblock %}

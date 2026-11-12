@@ -77,6 +77,33 @@ def test_list_published_hides_unpublished_and_filters_by_category(repos):
     assert len(repos.food.list_all()) == 3
 
 
+def test_list_published_filters_by_allergens_and_dietary_labels(repos):
+    wedding = repos.food.add_category(EventCategory("Wedding"))
+    birthday = repos.food.add_category(EventCategory("Birthday"))
+
+    def add(name, allergens, labels, categories, published=True):
+        repos.food.add(FoodItem(name=name, description="Test", price_nok=100, published=published,
+                                allergens=allergens, dietary_labels=labels, event_categories=categories))
+
+    add("Cake", ["milk", "gluten"], ["vegetarian"], [wedding, birthday])
+    add("Curry", [], ["vegan", "gluten-free"], [birthday])
+    add("Salmon", ["fish"], ["gluten-free"], [wedding])
+    add("Draft", ["nuts"], ["vegan"], [wedding], published=False)
+
+    def names(**filters):
+        return [f.name for f in repos.food.list_published(**filters)]
+
+    assert names(exclude_allergens=["milk"]) == ["Curry", "Salmon"]
+    assert names(exclude_allergens=["milk", "fish"]) == ["Curry"]
+    assert names(require_labels=["gluten-free"]) == ["Curry", "Salmon"]
+    assert names(require_labels=["gluten-free", "vegan"]) == ["Curry"]
+    assert names(exclude_allergens=["fish"], require_labels=["gluten-free"]) == ["Curry"]
+    assert names(category_id=wedding.id, require_labels=["gluten-free"]) == ["Salmon"]
+    # Only allergens and labels on published dishes can be filtered on.
+    assert repos.food.list_allergens() == ["fish", "gluten", "milk"]
+    assert repos.food.list_dietary_labels() == ["gluten-free", "vegan", "vegetarian"]
+
+
 def test_update_food_item(repos):
     wedding = repos.food.add_category(EventCategory("Wedding"))
     conference = repos.food.add_category(EventCategory("Conference"))
@@ -91,6 +118,11 @@ def test_update_food_item(repos):
     assert loaded.price_nok == 700
     assert not loaded.published
     assert [c.name for c in loaded.event_categories] == ["Conference"]
+
+    item.allergens, item.dietary_labels = ["fish"], []
+    repos.food.update(item)
+    loaded = repos.food.get(item.id)
+    assert (loaded.allergens, loaded.dietary_labels) == (["fish"], [])
 
 
 def test_deleting_food_item_keeps_old_order_items(repos):

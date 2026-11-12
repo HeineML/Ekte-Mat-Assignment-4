@@ -11,7 +11,8 @@ from app.models.services import ask_question, build_cart, place_order
 
 bp = Blueprint("orders", __name__)
 
-GUEST_GROUP_ROWS = 4
+# The form starts with one guest group row; the "Add group" button (JavaScript) adds more.
+GUEST_GROUP_ROWS = 1
 GROUP_FIELDS = ("description", "size", "allergy_notes", "dietary_notes")
 
 
@@ -74,6 +75,7 @@ def checkout():
             flash(error, "error")
 
     return render_template("orders/checkout.html", cart=cart, form=request.form, rows=rows,
+                           has_groups=any(any(row.values()) for row in rows),
                            min_date=date.today() + timedelta(days=1))
 
 

@@ -1,11 +1,12 @@
-"""Customer menu (C1): published food items grouped by event category, and the photo credits."""
+"""Customer menu (C1): published food items grouped by event category, filtered by allergens and
+dietary labels, and the photo credits."""
 import json
 import os
 
 from flask import Blueprint, abort, current_app, render_template, request
 
 from app.models import get_repos
-from app.models.services import menu_by_event
+from app.models.services import menu_by_event, menu_filters
 
 bp = Blueprint("menu", __name__)
 
@@ -21,7 +22,9 @@ def index():
         except ValueError:
             abort(404)
 
-    sections = menu_by_event(selected_id)
+    allergens, labels, without, diet = menu_filters(request.args.getlist("without"),
+                                                    request.args.getlist("diet"))
+    sections = menu_by_event(selected_id, exclude_allergens=without, require_labels=diet)
     if sections is None:
         abort(404)
 
@@ -30,6 +33,10 @@ def index():
         categories=get_repos().food.list_categories(),
         sections=sections,
         selected_id=selected_id,
+        allergens=allergens,
+        labels=labels,
+        without=without,
+        diet=diet,
     )
 
 

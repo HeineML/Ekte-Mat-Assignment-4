@@ -1,16 +1,33 @@
+import os
+
 import pytest
+from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash
 
-from app import create_app
-from app.config import TestConfig
-from app.models import get_repos
-from app.models.entities import Role, User
+# Read NEO4J_TEST_* from .env before app.config reads the environment.
+load_dotenv()
+
+from app import create_app  # noqa: E402
+from app.config import TestConfig  # noqa: E402
+from app.models import get_repos  # noqa: E402
+from app.models.entities import Role, User  # noqa: E402
+
+
+def _test_database_problem():
+    if not TestConfig.NEO4J_URI or not TestConfig.NEO4J_PASSWORD:
+        return "NEO4J_TEST_URI and NEO4J_TEST_PASSWORD are not set (see .env.example)"
+    if TestConfig.NEO4J_URI == os.environ.get("NEO4J_URI"):
+        return "NEO4J_TEST_URI is the app's own instance; the tests would delete its data"
+    return None
 
 
 @pytest.fixture
 def app(tmp_path):
+    """An app connected to the separate Neo4j test instance, emptied before every test."""
+    problem = _test_database_problem()
+    if problem:
+        pytest.skip(f"No Neo4j test database: {problem}")
     app = create_app(TestConfig)
-    app.config["DATABASE"] = str(tmp_path / "test.sqlite")
     app.config["UPLOAD_FOLDER"] = str(tmp_path / "uploads")
     with app.app_context():
         get_repos().reset()

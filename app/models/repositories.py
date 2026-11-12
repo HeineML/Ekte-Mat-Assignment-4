@@ -1,6 +1,6 @@
 """Repository interfaces: the contract between the rest of the app and the storage backend.
 
-Controllers and views only use these methods. Each backend (SQLite now, maybe Neo4j later)
+Controllers and views only use these methods. Each backend (Neo4j, in app/models/neo4j/)
 implements them and returns entities from app.models.entities, never rows or queries.
 """
 from abc import ABC, abstractmethod
@@ -58,8 +58,17 @@ class FoodItemRepository(ABC):
         """All food items, published or not, ordered by name."""
 
     @abstractmethod
-    def list_published(self, category_id=None):
-        """Published food items, optionally only those in one event category."""
+    def list_published(self, category_id=None, exclude_allergens=(), require_labels=()):
+        """Published food items ordered by name, optionally only those in one event category,
+        without any of exclude_allergens and with all of require_labels."""
+
+    @abstractmethod
+    def list_allergens(self):
+        """Names of the allergens in published food items, ordered by name."""
+
+    @abstractmethod
+    def list_dietary_labels(self):
+        """Names of the dietary labels on published food items, ordered by name."""
 
 
 class OrderRepository(ABC):

@@ -20,7 +20,9 @@ def menu(repos):
         ))
 
     add("Cream cake", [wedding, christmas])
-    add("Pinnekjøtt", [christmas], price=1250)
+    pinnekjott = add("Pinnekjøtt", [christmas], price=1250)
+    pinnekjott.allergens, pinnekjott.dietary_labels = [], ["gluten-free"]
+    repos.food.update(pinnekjott)
     add("Secret draft", [wedding], published=False)
     return {"wedding": wedding, "christmas": christmas}
 
@@ -97,3 +99,27 @@ def test_photo_credits_page(client):
     html = client.get("/photo-credits").get_data(as_text=True)
     assert "Wikimedia Commons" in html and "CC BY" in html
     assert 'href="/photo-credits"' in client.get("/").get_data(as_text=True)
+
+
+def test_menu_filter_by_allergen_and_dietary_label(client, menu):
+    page = client.get("/menu?without=milk").get_data(as_text=True)
+    assert "Pinnekjøtt" in page and "Cream cake" not in page
+    assert 'value="milk" checked' in page
+
+    page = client.get("/menu?diet=vegetarian").get_data(as_text=True)
+    assert "Cream cake" in page and "Pinnekjøtt" not in page
+
+
+def test_menu_filter_keeps_the_event_and_ignores_unknown_values(client, menu):
+    wedding = menu["wedding"].id
+    page = client.get(f"/menu?event={wedding}&without=milk&without=plutonium").get_data(as_text=True)
+    assert "No dishes for this event match the filter." in page
+    assert f'name="event" value="{wedding}"' in page
+    # The event tabs keep the filter.
+    assert f"/menu?event={menu['christmas'].id}&amp;without=milk" in page
+    assert "plutonium" not in page
+
+
+def test_menu_by_event_with_filters(menu):
+    sections = menu_by_event(exclude_allergens=["gluten"], require_labels=["gluten-free"])
+    assert [(c.name, names(items)) for c, items in sections] == [("Christmas party", ["Pinnekjøtt"])]

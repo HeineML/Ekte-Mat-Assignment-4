@@ -11,11 +11,12 @@ from app.models.repositories import EmailAlreadyRegistered
 MIN_PASSWORD_LENGTH = 8
 
 
-def menu_by_event(category_id=None):
+def menu_by_event(category_id=None, exclude_allergens=(), require_labels=()):
     """Published menu grouped by event category, as a list of (EventCategory, [FoodItem]).
 
-    With category_id, only that category is returned. Empty categories are skipped.
-    Returns None if category_id doesn't exist.
+    With category_id, only that category is returned. exclude_allergens and require_labels filter
+    the dishes (C1): no dish contains any of the excluded allergens, and every dish has all the
+    required dietary labels. Empty categories are skipped. Returns None if category_id doesn't exist.
     """
     food = get_repos().food
     if category_id is not None:
@@ -28,10 +29,23 @@ def menu_by_event(category_id=None):
 
     sections = []
     for category in categories:
-        items = food.list_published(category_id=category.id)
+        items = food.list_published(category_id=category.id, exclude_allergens=exclude_allergens,
+                                    require_labels=require_labels)
         if items:
             sections.append((category, items))
     return sections
+
+
+def menu_filters(without, diet):
+    """The menu filter options and the valid selections among the raw values from the URL.
+
+    Returns (allergens, labels, selected_without, selected_diet). Only allergens and dietary labels
+    used by published dishes can be chosen; anything else in the URL is ignored.
+    """
+    food = get_repos().food
+    allergens, labels = food.list_allergens(), food.list_dietary_labels()
+    return (allergens, labels,
+            [a for a in allergens if a in without], [l for l in labels if l in diet])
 
 
 # Shopping cart (C2). The controller keeps the raw cart, {food_item_id: quantity}, in the session;

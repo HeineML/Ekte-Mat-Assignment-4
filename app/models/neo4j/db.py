@@ -7,8 +7,9 @@ commit on success, roll back on error and retry transient errors such as a lost 
 """
 import atexit
 
+import certifi
 from flask import current_app
-from neo4j import GraphDatabase
+from neo4j import GraphDatabase, TrustCustomCAs
 
 _drivers = {}
 
@@ -20,8 +21,19 @@ def get_driver():
         if not config["NEO4J_URI"] or not config["NEO4J_PASSWORD"]:
             raise RuntimeError("Neo4j is not configured. Set NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD "
                                "(for example in .env, see .env.example).")
-        _drivers[key] = GraphDatabase.driver(config["NEO4J_URI"], auth=key[1:])
+        _drivers[key] = _connect(config["NEO4J_URI"], auth=key[1:])
     return _drivers[key]
+
+
+def _connect(uri, auth):
+    """Open a driver. For encrypted URIs (neo4j+s://, as Aura uses) the server certificate is checked
+    against certifi's CA bundle instead of the operating system's, because some Windows machines
+    lack the root certificate Aura's certificate chains to and then fail with SSLCertVerificationError."""
+    scheme, sep, rest = uri.partition("://")
+    if scheme in ("neo4j+s", "bolt+s"):
+        return GraphDatabase.driver(f"{scheme[:-2]}{sep}{rest}", auth=auth, encrypted=True,
+                                    trusted_certificates=TrustCustomCAs(certifi.where()))
+    return GraphDatabase.driver(uri, auth=auth)
 
 
 def _session():

@@ -59,6 +59,23 @@ def test_checkout_page_shows_cart(client, customer):
     assert "2 300 kr" in html  # 20 × 50 + 2 × 650
 
 
+def test_checkout_starts_with_one_guest_group_row_and_the_toggle_off(client, customer):
+    html = client.get("/checkout").get_data(as_text=True)
+    form = html.split('<template id="guest-group-template">')[0]
+    assert form.count('name="group_description"') == 1
+    assert '<input type="checkbox" id="has-groups" >' in html
+    assert "js/guest-groups.js" in html
+
+
+def test_checkout_shows_entered_groups_again_after_an_error(client, customer):
+    groups = [{"description": "Adults", "size": "25"}, {"description": "Kids", "size": "5"}]
+    html = checkout(client, groups, delivery_address="").get_data(as_text=True)
+    form = html.split('<template id="guest-group-template">')[0]
+    assert form.count('name="group_description"') == 2
+    assert 'value="Kids"' in form
+    assert '<input type="checkbox" id="has-groups" checked>' in html
+
+
 def test_valid_checkout_saves_order(client, customer, repos, menu):
     groups = [{"description": "Adults", "size": "25"},
               {"description": "Children", "size": "5", "allergy_notes": "Milk", "dietary_notes": "Halal"},

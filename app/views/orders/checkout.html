@@ -38,29 +38,45 @@
       <textarea name="delivery_address" rows="2" required>{{ form.get('delivery_address', '') }}</textarea>
     </label>
 
-    <fieldset>
+    {% macro guest_group_row(row) %}
+      <div class="guest-group">
+        <label>Group
+          <input type="text" name="group_description" value="{{ row.description }}" placeholder="e.g. Children">
+        </label>
+        <label>Size
+          <input type="number" name="group_size" min="1" value="{{ row.size }}">
+        </label>
+        <label>Allergy notes
+          <input type="text" name="group_allergy_notes" value="{{ row.allergy_notes }}">
+        </label>
+        <label>Dietary notes
+          <input type="text" name="group_dietary_notes" value="{{ row.dietary_notes }}">
+        </label>
+        <button type="button" class="secondary remove-group" hidden>Remove</button>
+      </div>
+    {% endmacro %}
+
+    <fieldset class="guest-groups">
       <legend>Guest groups</legend>
-      <p class="muted small">Describe groups of guests with the same allergies or diet, for example
-        "Children, 8, milk allergy". Leave rows empty if you don't need them; with no groups, the order
-        is for all guests with no special notes.</p>
-      {% for row in rows %}
-        <div class="guest-group">
-          <label>Group
-            <input type="text" name="group_description" value="{{ row.description }}" placeholder="e.g. Children">
-          </label>
-          <label>Size
-            <input type="number" name="group_size" min="1" value="{{ row.size }}">
-          </label>
-          <label>Allergy notes
-            <input type="text" name="group_allergy_notes" value="{{ row.allergy_notes }}">
-          </label>
-          <label>Dietary notes
-            <input type="text" name="group_dietary_notes" value="{{ row.dietary_notes }}">
-          </label>
+      <label class="checkbox guest-groups-toggle" hidden>
+        <input type="checkbox" id="has-groups" {{ 'checked' if has_groups }}>
+        Some guests have allergies or special diets
+      </label>
+      <div id="guest-group-rows">
+        <p class="muted small">Describe groups of guests with the same allergies or diet, for example
+          "Children, 8, milk allergy". Without groups, the order is for all guests with no special notes.</p>
+        <div class="guest-group-list">
+          {% for row in rows %}{{ guest_group_row(row) }}{% endfor %}
         </div>
-      {% endfor %}
+        <button type="button" class="secondary add-group" hidden>+ Add group</button>
+        <template id="guest-group-template">{{ guest_group_row({}) }}</template>
+      </div>
     </fieldset>
 
     <button type="submit">Submit order</button>
   </form>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/guest-groups.js') }}"></script>
 {% endblock %}

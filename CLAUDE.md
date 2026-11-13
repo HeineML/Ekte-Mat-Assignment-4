@@ -8,7 +8,7 @@ Ekte Mat Online is INFO212 Obligatory Assignments 4 and 5: an online catering an
 
 - The assignment texts are the source of truth (requirement IDs C1–C5 for customers, A1–A4 for admins; Oblig 5 adds the Neo4j requirements). Do not invent requirements. When it leaves something open, point that out and ask instead of deciding silently.
 - The group did **not** complete Lab 7. Never describe any material as work done in Lab 7.
-- Architecture, domain model and design decisions are summarised in `docs/report.md`.
+- Architecture, domain model and design decisions are summarised in `docs/report-oblig4.md`; the graph data model is in `docs/report-oblig5.md` (and `.pdf`).
 
 ## Commands
 
@@ -57,7 +57,7 @@ The shopping cart is kept in the Flask session as `session["cart"] = {"<food_ite
 
 - Before a larger feature: use Plan mode and have the group agree on the plan before implementing it.
 - Reference requirement IDs (C1–C5, A1–A4) in plans and commit messages to keep requirements traceable.
-- Status (2026-11-12): Oblig 4 is done and tagged `v1.0` (`docs/report.md` has its report material). Oblig 5 (Neo4j Aura) is in progress on branch `Heine`; group decisions: Aura, menu filter on allergens/dietary labels as the graph query, SQLite moved to `legacy/`, tests on a separate Aura instance. Still to do: Oblig 5 report (graph diagram, rationale, comparison with the Oblig 4 class diagram) and the `oblig5` tag, created only when the group says so.
+- Status (2026-11-13): Oblig 4 is done and tagged `v1.0` (report material in `docs/report-oblig4.md`). Oblig 5 (Neo4j Aura) is done, merged to `main` and tagged `oblig5`; group decisions: Aura, menu filter on allergens/dietary labels as the graph query, SQLite moved to `legacy/`, tests on a separate Aura instance. The report is `docs/report-oblig5.md`/`.pdf`, kept to what the assignment asks (front page and graph data model).
 
 ## Security and data
 

@@ -5,7 +5,7 @@ as query parameters, never formatted into the query text. Each method is one tra
 db.py), so a food item with its relationships, or an order with its lines and guest groups, is
 saved completely or not at all.
 
-Graph model (see docs/report.md):
+Graph model (see docs/report-oblig5.md):
 
     (:User)-[:PLACED]->(:Order)-[:HAS_LINE]->(:OrderLine)-[:OF_ITEM]->(:FoodItem)
     (:Order)-[:HAS_GUEST_GROUP]->(:GuestGroup)

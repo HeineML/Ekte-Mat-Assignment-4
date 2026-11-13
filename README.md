@@ -2,7 +2,7 @@
 
 INFO212 Obligatory Assignments 4 and 5: an online catering and ordering system, built with Flask using MVC.
 
-Report material (features with screenshots, diagrams, design and reflection) is in [docs/report.md](docs/report.md).
+Reports: Oblig 4 (features with screenshots, diagrams, design and reflection) in [docs/report-oblig4.md](docs/report-oblig4.md); Oblig 5 (graph data model) in [docs/report-oblig5.md](docs/report-oblig5.md), also as [PDF](docs/report-oblig5.pdf).
 
 Assessed versions: tag `v1.0` (Oblig 4, SQLite) and tag `oblig5` (Oblig 5, Neo4j).
 

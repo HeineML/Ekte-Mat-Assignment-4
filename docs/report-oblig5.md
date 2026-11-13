@@ -37,6 +37,14 @@ flowchart LR
     FoodItem -- HAS_LABEL --> DietaryLabel
 ```
 
+![The seeded demo data in the Neo4j Aura console](screenshots/17-aura-graph.png)
+
+*The seeded demo data in Neo4j Aura: 67 nodes and 99 relationships, with the labels and relationship types listed on the left.*
+
+![A GuestGroup node and its properties in Neo4j Aura](screenshots/18-aura-graph.png)
+
+*One `GuestGroup` node with its properties.*
+
 ### Design choices
 
 - **Allergens and dietary labels are nodes.** All dishes with milk share one `Allergen {name: "milk"}` node, so
